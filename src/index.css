@@ -6,35 +6,35 @@
 
 @layer base {
   :root {
-    --background: 40 33% 97%;
-    --foreground: 30 10% 20%;
+    --background: 40 33% 98%;
+    --foreground: 18 15% 19%;
 
-    --card: 0 0% 100%;
-    --card-foreground: 30 10% 20%;
+    --card: 30 30% 96%;
+    --card-foreground: 18 15% 19%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 30 10% 20%;
+    --popover-foreground: 18 15% 19%;
 
     --primary: 32 25% 53%;
-    --primary-foreground: 40 33% 97%;
+    --primary-foreground: 40 33% 98%;
 
     --secondary: 22 30% 84%;
-    --secondary-foreground: 30 10% 20%;
+    --secondary-foreground: 18 15% 19%;
 
-    --muted: 22 30% 84%;
-    --muted-foreground: 30 10% 40%;
+    --muted: 30 30% 92%;
+    --muted-foreground: 18 10% 42%;
 
-    --accent: 22 30% 84%;
-    --accent-foreground: 30 10% 20%;
+    --accent: 28 33% 90%;
+    --accent-foreground: 18 15% 19%;
 
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 210 40% 98%;
 
-    --border: 30 20% 88%;
+    --border: 30 20% 90%;
     --input: 30 20% 88%;
     --ring: 32 25% 53%;
 
-    --radius: 0.5rem;
+    --radius: 0.75rem;
 
     --sidebar-background: 0 0% 98%;
     --sidebar-foreground: 240 5.3% 26.1%;
@@ -81,5 +81,55 @@
 
   h1, h2, h3, h4, h5, h6 {
     font-family: 'Noto Serif', serif;
+  }
+}
+
+@layer utilities {
+  .animate-fade-up {
+    animation: fadeUp 0.8s ease-out both;
+  }
+
+  .animate-fade-up-delay {
+    animation: fadeUp 0.8s ease-out 0.2s both;
+  }
+
+  .animate-fade-up-delay-2 {
+    animation: fadeUp 0.8s ease-out 0.4s both;
+  }
+
+  .animate-fade-up-delay-3 {
+    animation: fadeUp 0.8s ease-out 0.6s both;
+  }
+
+  .animate-float {
+    animation: float 6s ease-in-out infinite;
+  }
+
+  .animate-float-slow {
+    animation: float 8s ease-in-out infinite;
+  }
+
+  .animate-float-delay {
+    animation: float 7s ease-in-out 2s infinite;
+  }
+}
+
+@keyframes fadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(24px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0) rotate(0deg);
+  }
+  50% {
+    transform: translateY(-12px) rotate(3deg);
   }
 }
