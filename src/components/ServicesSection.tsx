@@ -1,14 +1,22 @@
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
+import StarField from "@/components/StarField";
 import serviceManicure from "@/assets/service-manicure.jpg";
 import serviceGel from "@/assets/service-gel.jpg";
 import servicePedicure from "@/assets/service-pedicure.jpg";
 import serviceBridal from "@/assets/service-bridal.jpg";
-import salonImage from "@/assets/salon-interior.jpg";
+
+const services = [
+  { image: serviceManicure, alt: "Classic Manicure — precision nail styling" },
+  { image: serviceGel, alt: "Gel Extensions — long-lasting beauty" },
+  { image: servicePedicure, alt: "Luxury Spa Pedicure — total relaxation" },
+  { image: serviceBridal, alt: "Bridal Nail Package — occasion elegance" },
+];
 
 const ServicesSection = () => (
-  <section id="services" className="py-24 md:py-32 bg-accent/20">
-    <div className="container mx-auto px-4 text-center">
+  <section id="services" className="relative py-28 md:py-36 bg-accent/20">
+    <StarField count={14} colorClass="bg-primary/20" />
+    <div className="container mx-auto px-4 lg:px-8 text-center">
       {/* Section label with decorative lines */}
       <div className="flex items-center justify-center gap-6 mb-4">
         <div className="h-px w-16 bg-primary/40" />
@@ -22,63 +30,25 @@ const ServicesSection = () => (
         Our Signature Services
       </h2>
 
-      {/* Mosaic Image Grid */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4 mb-14">
-        {/* Row 1: 4 images */}
-        <div className="aspect-[3/4] overflow-hidden rounded-sm">
-          <img
-            src={serviceManicure}
-            alt="Classic Manicure"
-            loading="lazy"
-            className="w-full h-full object-cover hover:scale-105 transition-transform duration-700"
-          />
-        </div>
-        <div className="aspect-[3/4] overflow-hidden rounded-sm">
-          <img
-            src={servicePedicure}
-            alt="Luxury Spa Pedicure"
-            loading="lazy"
-            className="w-full h-full object-cover hover:scale-105 transition-transform duration-700"
-          />
-        </div>
-        <div className="aspect-[3/4] overflow-hidden rounded-sm">
-          <img
-            src={salonImage}
-            alt="Salon Interior"
-            loading="lazy"
-            className="w-full h-full object-cover hover:scale-105 transition-transform duration-700"
-          />
-        </div>
-        <div className="aspect-[3/4] overflow-hidden rounded-sm">
-          <img
-            src={serviceGel}
-            alt="Gel Extensions"
-            loading="lazy"
-            className="w-full h-full object-cover hover:scale-105 transition-transform duration-700"
-          />
-        </div>
-
-        {/* Row 2: 2 wider images */}
-        <div className="col-span-2 aspect-[16/9] overflow-hidden rounded-sm">
-          <img
-            src={serviceBridal}
-            alt="Bridal Nail Package"
-            loading="lazy"
-            className="w-full h-full object-cover hover:scale-105 transition-transform duration-700"
-          />
-        </div>
-        <div className="col-span-2 aspect-[16/9] overflow-hidden rounded-sm">
-          <img
-            src={serviceManicure}
-            alt="Nail Art Design"
-            loading="lazy"
-            className="w-full h-full object-cover hover:scale-105 transition-transform duration-700"
-          />
-        </div>
+      {/* 4-image grid */}
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-5 mb-16">
+        {services.map((service) => (
+          <div
+            key={service.alt}
+            className="group aspect-[3/4] rounded-lg overflow-hidden shadow-md shadow-foreground/5"
+          >
+            <img
+              src={service.image}
+              alt={service.alt}
+              loading="lazy"
+              className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+            />
+          </div>
+        ))}
       </div>
 
       <Link to="/services">
-        <Button className="rounded-none bg-primary text-primary-foreground px-10 py-5 text-sm tracking-wider font-medium hover:bg-primary/90 transition-all duration-300">
+        <Button className="rounded-lg bg-primary text-primary-foreground px-10 py-5 text-sm tracking-wider font-medium hover:bg-primary/85 transition-all duration-500 shadow-sm">
           View All Services
         </Button>
       </Link>

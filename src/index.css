@@ -176,3 +176,62 @@
     transform: translateY(-14px) scale(0.7);
   }
 }
+
+/* Star twinkle — gentle pulse in/out */
+@keyframes starTwinkle {
+  0%, 100% {
+    opacity: 0;
+    transform: scale(0.3) rotate(0deg);
+  }
+  20% {
+    opacity: 0.8;
+    transform: scale(1) rotate(45deg);
+  }
+  50% {
+    opacity: 0.4;
+    transform: scale(0.7) rotate(90deg);
+  }
+  80% {
+    opacity: 0.9;
+    transform: scale(1.1) rotate(135deg);
+  }
+}
+
+/* Star drift — slow float with subtle horizontal sway */
+@keyframes starDrift {
+  0%, 100% {
+    opacity: 0;
+    transform: translate(0, 0) scale(0.4);
+  }
+  15% {
+    opacity: 0.6;
+    transform: translate(4px, -8px) scale(1);
+  }
+  50% {
+    opacity: 0.3;
+    transform: translate(-3px, -18px) scale(0.8);
+  }
+  85% {
+    opacity: 0.7;
+    transform: translate(2px, -10px) scale(1.05);
+  }
+}
+
+/* Star shimmer — fast subtle glint */
+@keyframes starShimmer {
+  0%, 100% { opacity: 0.1; }
+  50% { opacity: 0.7; }
+}
+
+/* 4-point star shape via clip-path */
+.star-shape {
+  clip-path: polygon(
+    50% 0%, 61% 35%, 100% 50%, 61% 65%,
+    50% 100%, 39% 65%, 0% 50%, 39% 35%
+  );
+}
+
+/* Diamond star shape */
+.star-diamond {
+  clip-path: polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%);
+}

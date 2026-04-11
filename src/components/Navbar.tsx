@@ -99,7 +99,7 @@ const Navbar = () => {
           </button>
           <Button
             onClick={() => scrollTo("contact")}
-            className="rounded-none bg-primary text-primary-foreground text-xs tracking-wider px-6 py-2 hover:bg-primary/85 transition-all duration-300"
+            className="rounded-lg bg-primary text-primary-foreground text-xs tracking-wider px-6 py-2 hover:bg-primary/85 transition-all duration-500"
           >
             Book Online
           </Button>
@@ -141,7 +141,7 @@ const Navbar = () => {
             <li className="pt-2">
               <Button
                 onClick={() => scrollTo("contact")}
-                className="rounded-none bg-primary text-primary-foreground w-full tracking-wider"
+                className="rounded-lg bg-primary text-primary-foreground w-full tracking-wider"
               >
                 Book Online
               </Button>

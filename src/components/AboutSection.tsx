@@ -1,10 +1,12 @@
 import { Button } from "@/components/ui/button";
+import StarField from "@/components/StarField";
 import salonImage from "@/assets/salon-interior.jpg";
 
 const AboutSection = () => (
-  <section id="about" className="py-24 md:py-32 bg-background">
+  <section id="about" className="relative py-28 md:py-36 bg-background">
+    <StarField count={10} colorClass="bg-primary/15" />
     {/* Section label with decorative lines */}
-    <div className="flex items-center justify-center gap-6 mb-12">
+    <div className="flex items-center justify-center gap-6 mb-14">
       <div className="h-px w-16 bg-primary/40" />
       <p className="uppercase tracking-[0.3em] text-primary text-xs font-semibold">
         About Estique
@@ -12,10 +14,10 @@ const AboutSection = () => (
       <div className="h-px w-16 bg-primary/40" />
     </div>
 
-    <div className="container mx-auto px-4 grid md:grid-cols-2 gap-16 items-center">
+    <div className="container mx-auto px-4 lg:px-8 grid md:grid-cols-2 gap-14 lg:gap-20 items-center">
       {/* Image */}
       <div className="relative group">
-        <div className="aspect-[4/5] rounded-sm overflow-hidden shadow-xl">
+        <div className="aspect-[4/5] rounded-lg overflow-hidden shadow-xl shadow-foreground/5">
           <img
             src={salonImage}
             alt="Elegant salon interior with beige chair and gold lamp"
@@ -26,7 +28,7 @@ const AboutSection = () => (
       </div>
 
       {/* Content */}
-      <div>
+      <div className="lg:pl-4">
         <h2 className="text-3xl md:text-4xl lg:text-5xl font-semibold mb-8 leading-tight">
           Refined Beauty & Elegance
         </h2>
@@ -36,7 +38,7 @@ const AboutSection = () => (
           Our tranquil space and meticulous attention to detail ensure an
           experience of true luxury.
         </p>
-        <Button className="rounded-none bg-primary text-primary-foreground px-10 py-5 text-sm tracking-wider font-medium hover:bg-primary/90 transition-all duration-300">
+        <Button className="rounded-lg bg-primary text-primary-foreground px-10 py-5 text-sm tracking-wider font-medium hover:bg-primary/85 transition-all duration-500 shadow-sm">
           Learn More
         </Button>
       </div>
