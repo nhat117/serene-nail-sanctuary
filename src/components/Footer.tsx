@@ -8,7 +8,7 @@ const Footer = () => (
         <div className="md:col-span-1">
           <div className="flex items-center gap-2 mb-5">
             <Sparkles className="h-4 w-4 text-primary" />
-            <span className="text-xl tracking-[0.15em] font-semibold" style={{ fontFamily: "'Noto Serif', serif" }}>Estique.</span>
+            <span className="text-xl tracking-[0.15em] font-semibold" style={{ fontFamily: "'Playfair Display', 'Noto Serif', serif" }}>Estique.</span>
           </div>
           <p className="text-background/50 text-sm leading-relaxed max-w-xs">
             Your sanctuary for refined nail care and timeless elegance. Experience quiet luxury.

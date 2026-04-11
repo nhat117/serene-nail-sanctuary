@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Noto+Serif:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Manrope:wght@300;400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=Manrope:wght@300;400;500;600;700&display=swap');
 
 @tailwind base;
 @tailwind components;
@@ -6,7 +6,7 @@
 
 @layer base {
   :root {
-    --background: 40 33% 98%;
+    --background: 40 33% 97%;
     --foreground: 18 15% 19%;
 
     --card: 30 30% 96%;
@@ -22,9 +22,9 @@
     --secondary-foreground: 18 15% 19%;
 
     --muted: 30 30% 92%;
-    --muted-foreground: 18 10% 42%;
+    --muted-foreground: 18 10% 38%;
 
-    --accent: 28 33% 90%;
+    --accent: 28 48% 92%;
     --accent-foreground: 18 15% 19%;
 
     --destructive: 0 84.2% 60.2%;
@@ -74,13 +74,19 @@
     @apply border-border;
   }
 
+  html {
+    scroll-behavior: smooth;
+  }
+
   body {
     @apply bg-background text-foreground;
     font-family: 'Manrope', sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
   }
 
   h1, h2, h3, h4, h5, h6 {
-    font-family: 'Noto Serif', serif;
+    font-family: 'Playfair Display', 'Noto Serif', serif;
   }
 }
 
@@ -112,7 +118,29 @@
   .animate-float-delay {
     animation: float 7s ease-in-out 2s infinite;
   }
+
+  .animate-sparkle {
+    animation: sparkleFloat 4s ease-in-out infinite;
+  }
 }
+
+/* Scroll-triggered reveal animations */
+.scroll-reveal {
+  opacity: 0;
+  transform: translateY(24px);
+  transition: opacity 0.8s cubic-bezier(0.22, 1, 0.36, 1),
+              transform 0.8s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.scroll-reveal.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.scroll-reveal-delay-1 { transition-delay: 0.15s; }
+.scroll-reveal-delay-2 { transition-delay: 0.3s; }
+.scroll-reveal-delay-3 { transition-delay: 0.45s; }
+.scroll-reveal-delay-4 { transition-delay: 0.6s; }
 
 @keyframes fadeUp {
   from {
@@ -131,5 +159,20 @@
   }
   50% {
     transform: translateY(-12px) rotate(3deg);
+  }
+}
+
+@keyframes sparkleFloat {
+  0%, 100% {
+    opacity: 0;
+    transform: translateY(0) scale(0.5);
+  }
+  25% {
+    opacity: 0.6;
+    transform: translateY(-6px) scale(1);
+  }
+  75% {
+    opacity: 0.3;
+    transform: translateY(-14px) scale(0.7);
   }
 }

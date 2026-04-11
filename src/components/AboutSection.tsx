@@ -1,50 +1,69 @@
 import { Button } from "@/components/ui/button";
-import { Sparkles } from "lucide-react";
+import { useScrollReveal } from "@/hooks/useScrollReveal";
 import salonImage from "@/assets/salon-interior.jpg";
 
-const AboutSection = () => (
-  <section id="about" className="py-24 md:py-32 bg-background">
-    <div className="container mx-auto px-4 grid md:grid-cols-2 gap-16 items-center">
-      {/* Image */}
-      <div className="relative group">
-        <div className="aspect-[4/5] rounded-3xl overflow-hidden shadow-xl">
-          <img
-            src={salonImage}
-            alt="Elegant salon interior with beige chair and gold lamp"
-            loading="lazy"
-            width={800}
-            height={1000}
-            className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
-          />
-        </div>
-        {/* Decorative border */}
-        <div className="absolute -bottom-4 -right-4 w-full h-full rounded-3xl border-2 border-primary/20 -z-10" />
-        <Sparkles className="absolute -top-3 -right-3 h-6 w-6 text-primary/40 animate-float" />
-      </div>
+const AboutSection = () => {
+  const sectionRef = useScrollReveal<HTMLElement>();
 
-      {/* Content */}
-      <div>
-        <p className="uppercase tracking-[0.25em] text-primary text-xs font-semibold mb-4 flex items-center gap-2">
-          <Sparkles className="h-4 w-4" />
+  return (
+    <section
+      id="about"
+      className="py-20 md:py-[100px] bg-background"
+      ref={sectionRef}
+    >
+      {/* Section label */}
+      <div className="flex items-center justify-center gap-6 mb-14 scroll-reveal">
+        <div className="h-px w-16 bg-primary/40" />
+        <p className="uppercase tracking-[0.3em] text-primary text-xs font-semibold">
           About Estique
         </p>
-        <h2 className="text-3xl md:text-4xl lg:text-5xl font-semibold mb-8 leading-tight">
-          Refined Beauty
-          <br />
-          & Elegance
-        </h2>
-        <p className="text-muted-foreground leading-relaxed mb-5 text-base md:text-lg">
-          At Estique, we believe beauty is found in the details. Our artisans blend modern techniques with timeless elegance, creating an experience that goes beyond the ordinary.
-        </p>
-        <p className="text-muted-foreground leading-relaxed mb-10 text-base md:text-lg">
-          Every visit is a retreat — a moment to pause, breathe, and emerge feeling polished and renewed. We use only the finest products to ensure your nails look stunning and stay healthy.
-        </p>
-        <Button variant="outline" className="rounded-full px-10 py-5 border-primary text-primary hover:bg-primary hover:text-primary-foreground transition-all duration-300 text-base">
-          Learn More
-        </Button>
+        <div className="h-px w-16 bg-primary/40" />
       </div>
-    </div>
-  </section>
-);
+
+      <div className="container mx-auto px-4 grid md:grid-cols-2 gap-12 lg:gap-20 items-center">
+        {/* Image */}
+        <div className="relative group scroll-reveal scroll-reveal-delay-1">
+          <div className="aspect-[4/5] overflow-hidden">
+            <img
+              src={salonImage}
+              alt="Elegant salon interior with beige chair and warm gold-accented lighting"
+              loading="lazy"
+              className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+            />
+          </div>
+          {/* Gold accent frame */}
+          <div className="absolute -bottom-3 -left-3 w-full h-full border border-primary/15 -z-10" />
+        </div>
+
+        {/* Content */}
+        <div>
+          <h2 className="text-3xl md:text-4xl lg:text-5xl font-semibold mb-8 leading-[1.1] scroll-reveal scroll-reveal-delay-2">
+            Refined Beauty
+            <br />
+            <span className="italic font-medium">& Elegance</span>
+          </h2>
+
+          <p className="text-muted-foreground leading-relaxed mb-6 text-base md:text-lg scroll-reveal scroll-reveal-delay-3">
+            Estique is a sanctuary of serene sophistication, where every detail
+            is curated for your comfort. From the warm glow of our gold-accented
+            interiors to the meticulous artistry of our nail technicians, we
+            elevate beauty care into an experience of true luxury.
+          </p>
+
+          <p className="text-muted-foreground leading-relaxed mb-10 text-base md:text-lg scroll-reveal scroll-reveal-delay-3">
+            Indulge in bespoke treatments tailored to perfection — because you
+            deserve nothing less than extraordinary.
+          </p>
+
+          <div className="scroll-reveal scroll-reveal-delay-4">
+            <Button className="rounded-none bg-primary text-primary-foreground px-10 py-5 text-sm tracking-[0.15em] font-medium hover:bg-primary/85 transition-all duration-500">
+              Learn More
+            </Button>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+};
 
 export default AboutSection;
