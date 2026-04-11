@@ -14,42 +14,36 @@ const Navbar = () => {
   };
 
   return (
-    <nav className="sticky top-0 z-50 bg-background/95 backdrop-blur border-b border-border">
+    <nav className="sticky top-0 z-50 bg-background/80 backdrop-blur-md border-b border-border/50">
       <div className="container mx-auto flex items-center justify-between px-4 py-4">
-        {/* Left links — desktop */}
-        <ul className="hidden lg:flex items-center gap-6">
-          {navLinks.slice(0, 3).map((l) => (
-            <li key={l}>
-              <button onClick={() => scrollTo(l)} className="text-sm font-medium tracking-wide text-foreground/80 hover:text-primary transition-colors">
-                {l}
-              </button>
-            </li>
-          ))}
-        </ul>
-
-        {/* Logo */}
-        <button onClick={() => scrollTo("home")} className="flex flex-col items-center gap-0.5">
+        {/* Logo — Left */}
+        <button onClick={() => scrollTo("home")} className="flex items-center gap-2">
           <Sparkles className="h-5 w-5 text-primary" />
-          <span className="font-serif text-2xl tracking-widest font-semibold text-foreground" style={{ fontFamily: "'Noto Serif', serif" }}>
+          <span className="text-2xl tracking-[0.15em] font-semibold text-foreground" style={{ fontFamily: "'Noto Serif', serif" }}>
             Estique.
           </span>
         </button>
 
-        {/* Right links — desktop */}
-        <ul className="hidden lg:flex items-center gap-6">
-          {navLinks.slice(3).map((l) => (
+        {/* Center links — desktop */}
+        <ul className="hidden lg:flex items-center gap-8">
+          {navLinks.map((l) => (
             <li key={l}>
-              <button onClick={() => scrollTo(l)} className="text-sm font-medium tracking-wide text-foreground/80 hover:text-primary transition-colors">
+              <button
+                onClick={() => scrollTo(l)}
+                className="text-sm font-medium tracking-wide text-foreground/70 hover:text-primary transition-colors duration-300 relative after:content-[''] after:absolute after:w-0 after:h-[1.5px] after:bottom-[-4px] after:left-0 after:bg-primary after:transition-all after:duration-300 hover:after:w-full"
+              >
                 {l}
               </button>
             </li>
           ))}
-          <li>
-            <Button onClick={() => scrollTo("contact")} className="rounded-full px-6">
-              Book Online
-            </Button>
-          </li>
         </ul>
+
+        {/* CTA — Right */}
+        <div className="hidden lg:block">
+          <Button onClick={() => scrollTo("contact")} className="rounded-full px-8 shadow-md hover:shadow-lg transition-all duration-300">
+            Book Online
+          </Button>
+        </div>
 
         {/* Mobile toggle */}
         <button className="lg:hidden text-foreground" onClick={() => setOpen(!open)}>
@@ -59,17 +53,20 @@ const Navbar = () => {
 
       {/* Mobile menu */}
       {open && (
-        <div className="lg:hidden border-t border-border bg-background px-4 pb-4">
-          <ul className="flex flex-col gap-3 pt-3">
+        <div className="lg:hidden border-t border-border/50 bg-background/95 backdrop-blur-md px-4 pb-6">
+          <ul className="flex flex-col gap-1 pt-4">
             {navLinks.map((l) => (
               <li key={l}>
-                <button onClick={() => scrollTo(l)} className="text-sm font-medium text-foreground/80 hover:text-primary transition-colors w-full text-left">
+                <button
+                  onClick={() => scrollTo(l)}
+                  className="text-sm font-medium text-foreground/70 hover:text-primary transition-colors w-full text-left py-2.5 px-2 rounded-lg hover:bg-accent/50"
+                >
                   {l}
                 </button>
               </li>
             ))}
-            <li>
-              <Button onClick={() => scrollTo("contact")} className="rounded-full w-full mt-2">
+            <li className="pt-2">
+              <Button onClick={() => scrollTo("contact")} className="rounded-full w-full">
                 Book Online
               </Button>
             </li>
