@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button";
-import heroImage from "@/assets/hero-nails.jpg";
+import heroImage from "@/assets/hero-nails-stock.jpg";
 
 const sparkles = [
   { size: 4, left: "8%", top: "18%", delay: 0 },
@@ -59,7 +59,7 @@ const HeroSection = () => (
           <div className="aspect-[4/5] lg:aspect-[3/4] overflow-hidden">
             <img
               src={heroImage}
-              alt="Luxury beauty with elegant manicured hands and warm beige lighting"
+              alt="Elegant manicured hands with nude nails on soft white fur"
               className="w-full h-full object-cover"
             />
           </div>

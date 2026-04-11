@@ -1,22 +1,30 @@
 import { useState } from "react";
 import { Menu, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 const leftLinks = ["Home", "About", "Services", "Gallery"];
+const routeLinks: Record<string, string> = {
+  Home: "/",
+  About: "/about",
+  Services: "/services",
+  Gallery: "/gallery",
+};
 const rightLinks = ["Pricing", "Contact"];
 
 const Navbar = () => {
   const [open, setOpen] = useState(false);
+  const navigate = useNavigate();
 
   const scrollTo = (id: string) => {
     setOpen(false);
-    if (id === "home") {
-      window.scrollTo({ top: 0, behavior: "smooth" });
-      return;
-    }
     const el = document.getElementById(id.toLowerCase());
-    el?.scrollIntoView({ behavior: "smooth" });
+    if (el) {
+      el.scrollIntoView({ behavior: "smooth" });
+    } else {
+      // Section not on current page — go home then scroll
+      navigate("/#" + id.toLowerCase());
+    }
   };
 
   return (
@@ -26,9 +34,9 @@ const Navbar = () => {
         <ul className="hidden lg:flex items-center gap-8 flex-1">
           {leftLinks.map((l) => (
             <li key={l}>
-              {l === "Services" ? (
+              {routeLinks[l] ? (
                 <Link
-                  to="/services"
+                  to={routeLinks[l]}
                   className="text-[11px] font-medium tracking-[0.15em] uppercase text-foreground/60 hover:text-primary transition-colors duration-300"
                 >
                   {l}
@@ -46,10 +54,7 @@ const Navbar = () => {
         </ul>
 
         {/* Center Logo */}
-        <button
-          onClick={() => scrollTo("home")}
-          className="flex flex-col items-center gap-0.5"
-        >
+        <Link to="/" className="flex flex-col items-center gap-0.5">
           <span
             className="text-2xl md:text-3xl tracking-[0.25em] font-semibold text-foreground uppercase"
             style={{ fontFamily: "'Playfair Display', 'Noto Serif', serif" }}
@@ -59,7 +64,7 @@ const Navbar = () => {
           <span className="text-[9px] tracking-[0.35em] text-muted-foreground font-medium uppercase">
             Nails & Beauty Artistry
           </span>
-        </button>
+        </Link>
 
         {/* Right nav links + CTA — desktop */}
         <div className="hidden lg:flex items-center gap-8 flex-1 justify-end">
@@ -95,9 +100,9 @@ const Navbar = () => {
           <ul className="flex flex-col gap-1 pt-4">
             {[...leftLinks, ...rightLinks].map((l) => (
               <li key={l}>
-                {l === "Services" ? (
+                {routeLinks[l] ? (
                   <Link
-                    to="/services"
+                    to={routeLinks[l]}
                     onClick={() => setOpen(false)}
                     className="text-sm font-medium text-foreground/60 hover:text-primary transition-colors w-full text-left py-2.5 px-2 rounded-lg hover:bg-accent/50 block"
                   >
