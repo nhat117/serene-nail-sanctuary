@@ -1,17 +1,36 @@
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 import StarField from "@/components/StarField";
+import { useParallax } from "@/hooks/useParallax";
 import serviceManicure from "@/assets/service-manicure.jpg";
 import serviceGel from "@/assets/service-gel.jpg";
 import servicePedicure from "@/assets/service-pedicure.jpg";
 import serviceBridal from "@/assets/service-bridal.jpg";
 
 const services = [
-  { image: serviceManicure, alt: "Classic Manicure — precision nail styling" },
-  { image: serviceGel, alt: "Gel Extensions — long-lasting beauty" },
-  { image: servicePedicure, alt: "Luxury Spa Pedicure — total relaxation" },
-  { image: serviceBridal, alt: "Bridal Nail Package — occasion elegance" },
+  { image: serviceManicure, alt: "Classic Manicure — precision nail styling", speed: 0.08 },
+  { image: serviceGel, alt: "Gel Extensions — long-lasting beauty", speed: 0.14 },
+  { image: servicePedicure, alt: "Luxury Spa Pedicure — total relaxation", speed: 0.06 },
+  { image: serviceBridal, alt: "Bridal Nail Package — occasion elegance", speed: 0.12 },
 ];
+
+const ServiceCard = ({ image, alt, speed }: { image: string; alt: string; speed: number }) => {
+  const p = useParallax(speed);
+  return (
+    <div
+      ref={p.ref}
+      className="group aspect-[3/4] rounded-lg overflow-hidden shadow-md shadow-foreground/5"
+    >
+      <img
+        src={image}
+        alt={alt}
+        loading="lazy"
+        className="w-full h-full object-cover scale-110 will-change-transform transition-transform duration-700 group-hover:scale-[1.15]"
+        style={{ transform: `translateY(${p.offset}px) scale(1.1)` }}
+      />
+    </div>
+  );
+};
 
 const ServicesSection = () => (
   <section id="services" className="relative py-28 md:py-36 bg-accent/20">
@@ -30,20 +49,10 @@ const ServicesSection = () => (
         Our Signature Services
       </h2>
 
-      {/* 4-image grid */}
+      {/* 4-image grid (parallax staggered) */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-5 mb-16">
         {services.map((service) => (
-          <div
-            key={service.alt}
-            className="group aspect-[3/4] rounded-lg overflow-hidden shadow-md shadow-foreground/5"
-          >
-            <img
-              src={service.image}
-              alt={service.alt}
-              loading="lazy"
-              className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
-            />
-          </div>
+          <ServiceCard key={service.alt} {...service} />
         ))}
       </div>
 
