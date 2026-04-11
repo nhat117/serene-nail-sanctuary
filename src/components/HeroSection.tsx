@@ -2,17 +2,27 @@ import { Button } from "@/components/ui/button";
 import heroImage from "@/assets/hero-nails-stock.jpg";
 
 const sparkles = [
-  { size: 4, left: "8%", top: "18%", delay: 0 },
-  { size: 3, left: "22%", top: "65%", delay: 1.4 },
-  { size: 5, left: "38%", top: "30%", delay: 0.7 },
-  { size: 3, left: "55%", top: "12%", delay: 2.0 },
-  { size: 4, left: "72%", top: "50%", delay: 0.3 },
-  { size: 3, left: "88%", top: "22%", delay: 1.8 },
-  { size: 4, left: "45%", top: "80%", delay: 1.1 },
+  { size: 4, left: "12%", top: "15%", delay: 0 },
+  { size: 3, left: "25%", top: "55%", delay: 1.4 },
+  { size: 5, left: "42%", top: "25%", delay: 0.7 },
+  { size: 3, left: "58%", top: "10%", delay: 2.0 },
+  { size: 4, left: "75%", top: "45%", delay: 0.3 },
+  { size: 3, left: "90%", top: "20%", delay: 1.8 },
+  { size: 4, left: "48%", top: "72%", delay: 1.1 },
 ];
 
 const HeroSection = () => (
-  <section id="home" className="relative overflow-hidden bg-white">
+  <section id="home" className="relative overflow-hidden">
+    {/* Background Image */}
+    <div className="absolute inset-0">
+      <img
+        src={heroImage}
+        alt="Elegant manicured hands with nude nails on soft white fur"
+        className="w-full h-full object-cover"
+      />
+      <div className="absolute inset-0 bg-gradient-to-r from-background/85 via-background/55 to-transparent" />
+    </div>
+
     {/* Floating Sparkles */}
     {sparkles.map((s, i) => (
       <div
@@ -28,43 +38,37 @@ const HeroSection = () => (
       />
     ))}
 
-    <div className="container mx-auto px-4">
-      <div className="grid grid-cols-1 lg:grid-cols-[9fr_11fr] lg:min-h-[85vh] items-center gap-12 lg:gap-16">
-        {/* Left — Text Content */}
-        <div className="pt-20 pb-8 lg:py-0">
-          {/* Decorative gold line */}
-          <div className="w-12 h-px bg-primary/60 mb-8 animate-fade-up" />
-
-          <h1 className="text-5xl md:text-6xl lg:text-7xl xl:text-[5.5rem] font-semibold leading-[1.05] mb-8 animate-fade-up tracking-tight">
+    <div className="container mx-auto px-4 relative z-10">
+      <div className="min-h-[85vh] flex items-center">
+        <div className="max-w-lg py-20">
+          <h1 className="text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-semibold leading-[1.1] mb-8 animate-fade-up">
             Experience
             <br />
-            <span className="italic font-medium">Quiet Luxury</span>
+            Quiet Luxury
           </h1>
 
-          <p className="text-foreground/60 max-w-md mb-10 text-base md:text-lg leading-relaxed animate-fade-up-delay">
+          <p className="text-muted-foreground max-w-md mb-10 text-base md:text-lg leading-relaxed animate-fade-up-delay">
             Welcome to Estique, where sophistication meets tranquility. Enjoy
             bespoke nail care and beauty treatments in an elegant, relaxing
             atmosphere.
           </p>
 
           <div className="animate-fade-up-delay-2">
-            <Button className="bg-primary text-primary-foreground rounded-none px-10 py-6 text-sm tracking-[0.15em] font-medium hover:bg-primary/85 transition-all duration-500 shadow-sm hover:shadow-md">
+            <Button
+              variant="outline"
+              size="lg"
+              className="rounded-none border-foreground text-foreground px-10 py-6 text-sm tracking-wider font-medium hover:bg-foreground hover:text-background transition-all duration-300"
+            >
               Book an Appointment
             </Button>
           </div>
-        </div>
 
-        {/* Right — Image */}
-        <div className="relative pb-12 lg:pb-0 animate-fade-up-delay">
-          <div className="aspect-[4/5] lg:aspect-[3/4] overflow-hidden">
-            <img
-              src={heroImage}
-              alt="Elegant manicured hands with nude nails on soft white fur"
-              className="w-full h-full object-cover"
-            />
+          {/* Decorative diamonds */}
+          <div className="flex items-center gap-3 mt-8 animate-fade-up-delay-3">
+            <span className="text-primary/50 text-xs">&#9830;</span>
+            <span className="text-primary/70 text-sm">&#9830;</span>
+            <span className="text-primary/50 text-xs">&#9830;</span>
           </div>
-          {/* Gold accent frame offset */}
-          <div className="hidden lg:block absolute -bottom-4 -right-4 w-full h-full border border-primary/20 -z-10" />
         </div>
       </div>
     </div>
