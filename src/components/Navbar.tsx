@@ -29,20 +29,20 @@ const Navbar = () => {
     <nav className="sticky top-0 z-50 bg-background/80 backdrop-blur-md border-b border-border/50">
       <div className="container mx-auto flex items-center justify-between px-4 py-3">
         {/* Left nav links — desktop */}
-        <ul className="hidden lg:flex items-center gap-6 flex-1">
+        <ul className="hidden lg:flex items-center gap-8 flex-1">
           {leftLinks.map((l) => (
             <li key={l}>
               {routeLinks[l] ? (
                 <Link
                   to={routeLinks[l]}
-                  className="text-xs font-medium tracking-wider text-foreground/70 hover:text-primary transition-colors duration-300"
+                  className="text-sm font-medium tracking-wider text-foreground/70 hover:text-primary transition-colors duration-300"
                 >
                   {l}
                 </Link>
               ) : (
                 <button
                   onClick={() => scrollTo(l.toLowerCase())}
-                  className="text-xs font-medium tracking-wider text-foreground/70 hover:text-primary transition-colors duration-300"
+                  className="text-sm font-medium tracking-wider text-foreground/70 hover:text-primary transition-colors duration-300"
                 >
                   {l}
                 </button>
@@ -52,11 +52,11 @@ const Navbar = () => {
         </ul>
 
         {/* Center Logo */}
-        <Link to="/" className="flex flex-col items-center gap-0.5">
+        <Link to="/" className="flex flex-col items-center gap-0.5 scale-[0.85]">
           {/* Bow/Ribbon SVG */}
           <svg
-            width="40"
-            height="24"
+            width="30"
+            height="18"
             viewBox="0 0 40 24"
             fill="none"
             className="text-primary"
@@ -79,27 +79,27 @@ const Navbar = () => {
             <circle cx="20" cy="12" r="2.5" fill="currentColor" />
           </svg>
           <span
-            className="text-2xl md:text-3xl tracking-[0.25em] font-semibold text-foreground uppercase"
+            className="text-xl md:text-2xl tracking-[0.25em] font-semibold text-foreground uppercase"
             style={{ fontFamily: "'Playfair Display', 'Noto Serif', serif" }}
           >
             Estique
           </span>
-          <span className="text-[10px] tracking-[0.3em] text-muted-foreground font-medium uppercase">
+          <span className="text-[9px] tracking-[0.25em] text-muted-foreground font-medium uppercase">
             Nails & Beauty Artistry
           </span>
         </Link>
 
         {/* Right nav links + CTA — desktop */}
-        <div className="hidden lg:flex items-center gap-6 flex-1 justify-end">
+        <div className="hidden lg:flex items-center gap-8 flex-1 justify-end">
           <button
             onClick={() => scrollTo("contact")}
-            className="text-xs font-medium tracking-wider text-foreground/70 hover:text-primary transition-colors duration-300"
+            className="text-sm font-medium tracking-wider text-foreground/70 hover:text-primary transition-colors duration-300"
           >
             Contact
           </button>
           <Button
             onClick={() => scrollTo("contact")}
-            className="rounded-lg bg-primary text-primary-foreground text-xs tracking-wider px-6 py-2 hover:bg-primary/85 transition-all duration-500"
+            className="btn-shimmer rounded-lg bg-primary text-primary-foreground text-xs tracking-wider px-6 py-2 hover:bg-primary/85 transition-all duration-500"
           >
             Book Online
           </Button>
@@ -141,7 +141,7 @@ const Navbar = () => {
             <li className="pt-2">
               <Button
                 onClick={() => scrollTo("contact")}
-                className="rounded-lg bg-primary text-primary-foreground w-full tracking-wider"
+                className="btn-shimmer rounded-lg bg-primary text-primary-foreground w-full tracking-wider"
               >
                 Book Online
               </Button>

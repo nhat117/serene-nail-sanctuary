@@ -235,3 +235,166 @@
 .star-diamond {
   clip-path: polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%);
 }
+
+/* ── Luxury effects ── */
+
+/* Gold shimmer sweep on buttons */
+.btn-shimmer {
+  position: relative;
+  overflow: hidden;
+}
+.btn-shimmer::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    105deg,
+    transparent 30%,
+    rgba(255, 255, 255, 0.25) 45%,
+    rgba(255, 255, 255, 0.35) 50%,
+    rgba(255, 255, 255, 0.25) 55%,
+    transparent 70%
+  );
+  transform: translateX(-120%);
+  transition: none;
+}
+.btn-shimmer:hover::after {
+  transform: translateX(120%);
+  transition: transform 0.8s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* Soft gold glow — radial background accent */
+.gold-glow {
+  position: relative;
+}
+.gold-glow::before {
+  content: '';
+  position: absolute;
+  width: 300px;
+  height: 300px;
+  border-radius: 50%;
+  background: radial-gradient(circle, hsl(32 40% 70% / 0.18) 0%, transparent 70%);
+  pointer-events: none;
+  z-index: 0;
+  animation: glowPulse 6s ease-in-out infinite;
+}
+
+/* Image reveal — clip from bottom on scroll */
+.img-reveal {
+  clip-path: inset(0 0 100% 0);
+  transition: clip-path 1s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.img-reveal.visible {
+  clip-path: inset(0 0 0% 0);
+}
+
+/* Decorative line expand */
+.line-expand {
+  transform: scaleX(0);
+  transform-origin: center;
+  transition: transform 1s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.line-expand.visible {
+  transform: scaleX(1);
+}
+
+/* Scroll reveal — slide from left */
+.scroll-reveal-left {
+  opacity: 0;
+  transform: translateX(-40px);
+  transition: opacity 0.9s cubic-bezier(0.22, 1, 0.36, 1),
+              transform 0.9s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.scroll-reveal-left.visible {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+/* Scroll reveal — slide from right */
+.scroll-reveal-right {
+  opacity: 0;
+  transform: translateX(40px);
+  transition: opacity 0.9s cubic-bezier(0.22, 1, 0.36, 1),
+              transform 0.9s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.scroll-reveal-right.visible {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+/* Scroll reveal — scale up */
+.scroll-reveal-scale {
+  opacity: 0;
+  transform: scale(0.92);
+  transition: opacity 0.8s cubic-bezier(0.22, 1, 0.36, 1),
+              transform 0.8s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.scroll-reveal-scale.visible {
+  opacity: 1;
+  transform: scale(1);
+}
+
+@keyframes glowPulse {
+  0%, 100% { opacity: 0.5; transform: scale(1); }
+  50% { opacity: 0.8; transform: scale(1.15); }
+}
+
+/* Heading letter-spacing reveal */
+@keyframes letterSpacingReveal {
+  from {
+    opacity: 0;
+    letter-spacing: 0.3em;
+    filter: blur(4px);
+  }
+  to {
+    opacity: 1;
+    letter-spacing: 0.01em;
+    filter: blur(0);
+  }
+}
+
+.animate-letter-reveal {
+  animation: letterSpacingReveal 1.2s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+/* Hero background slow zoom */
+@keyframes heroZoom {
+  0% {
+    transform: scale(1);
+  }
+  100% {
+    transform: scale(1.12);
+  }
+}
+
+.animate-hero-zoom {
+  animation: heroZoom 20s ease-out forwards;
+}
+
+/* Hero shimmer sweep */
+@keyframes heroShimmer {
+  0% {
+    opacity: 0;
+    background-position: -200% 0;
+  }
+  20% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+    background-position: 200% 0;
+  }
+}
+
+.animate-hero-shimmer {
+  background: linear-gradient(
+    105deg,
+    transparent 40%,
+    hsl(32 40% 70% / 0.08) 45%,
+    hsl(32 40% 70% / 0.13) 50%,
+    hsl(32 40% 70% / 0.08) 55%,
+    transparent 60%
+  );
+  background-size: 200% 100%;
+  animation: heroShimmer 6s ease-in-out 1s infinite;
+}

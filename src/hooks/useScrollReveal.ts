@@ -1,5 +1,14 @@
 import { useEffect, useRef } from "react";
 
+const REVEAL_SELECTORS = [
+  ".scroll-reveal",
+  ".scroll-reveal-left",
+  ".scroll-reveal-right",
+  ".scroll-reveal-scale",
+  ".img-reveal",
+  ".line-expand",
+].join(",");
+
 export function useScrollReveal<T extends HTMLElement = HTMLElement>() {
   const ref = useRef<T>(null);
 
@@ -7,7 +16,7 @@ export function useScrollReveal<T extends HTMLElement = HTMLElement>() {
     const container = ref.current;
     if (!container) return;
 
-    const elements = container.querySelectorAll(".scroll-reveal");
+    const elements = container.querySelectorAll(REVEAL_SELECTORS);
 
     const observer = new IntersectionObserver(
       (entries) => {
