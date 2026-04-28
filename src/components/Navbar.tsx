@@ -98,7 +98,7 @@ const Navbar = () => {
             Contact
           </button>
           <Button
-            onClick={() => scrollTo("contact")}
+            onClick={() => navigate("/booking")}
             className="btn-shimmer rounded-lg bg-primary text-primary-foreground text-xs tracking-wider px-6 py-2 hover:bg-primary/85 transition-all duration-500"
           >
             Book Online
@@ -140,7 +140,10 @@ const Navbar = () => {
             ))}
             <li className="pt-2">
               <Button
-                onClick={() => scrollTo("contact")}
+                onClick={() => {
+                  setOpen(false);
+                  navigate("/booking");
+                }}
                 className="btn-shimmer rounded-lg bg-primary text-primary-foreground w-full tracking-wider"
               >
                 Book Online
