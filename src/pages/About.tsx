@@ -136,7 +136,7 @@ const AboutPage = () => {
             </p>
 
             <Link to="/services">
-              <Button className="rounded-none bg-primary text-primary-foreground px-10 py-5 text-sm tracking-[0.15em] font-medium hover:bg-primary/85 transition-all duration-500">
+              <Button className="btn-shimmer rounded-lg bg-primary text-primary-foreground text-xs tracking-wider px-6 py-2 hover:bg-primary/85 transition-all duration-500">
                 Explore Our Services
                 <ArrowRight className="h-4 w-4 ml-2" />
               </Button>
@@ -202,9 +202,11 @@ const AboutPage = () => {
             Book your appointment and discover what quiet luxury feels like.
           </p>
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-            <Button className="rounded-none bg-primary text-primary-foreground px-10 py-5 text-sm tracking-[0.15em] font-medium hover:bg-primary/85 transition-all duration-500">
-              Book an Appointment
-            </Button>
+            <Link to="/booking">
+              <Button className="btn-shimmer rounded-lg bg-primary text-primary-foreground text-xs tracking-wider px-6 py-2 hover:bg-primary/85 transition-all duration-500">
+                Book an Appointment
+              </Button>
+            </Link>
             <Link to="/gallery">
               <Button
                 variant="outline"

@@ -3,12 +3,21 @@ import { Menu, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Link, useNavigate } from "react-router-dom";
 
-const leftLinks = ["Home", "About", "Services", "Gallery", "Pricing"];
+const leftLinks = [
+  "Home",
+  "About",
+  "Services",
+  "Gallery",
+  "Pricing",
+  "Location",
+];
 const routeLinks: Record<string, string> = {
   Home: "/",
   About: "/about",
   Services: "/services",
   Gallery: "/gallery",
+  Pricing: "/pricing",
+  Location: "/location",
 };
 
 const Navbar = () => {

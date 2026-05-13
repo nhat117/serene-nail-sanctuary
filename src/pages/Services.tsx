@@ -174,9 +174,11 @@ const ServicesPage = () => {
             Book your appointment today and discover the art of quiet luxury.
           </p>
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-            <Button className="rounded-none bg-primary text-primary-foreground px-10 py-5 text-sm tracking-[0.15em] font-medium hover:bg-primary/85 transition-all duration-500">
-              Book an Appointment
-            </Button>
+            <Link to="/booking">
+              <Button className="btn-shimmer rounded-lg bg-primary text-primary-foreground text-xs tracking-wider px-6 py-2 hover:bg-primary/85 transition-all duration-500">
+                Book an Appointment
+              </Button>
+            </Link>
             <Link to="/">
               <Button
                 variant="outline"

@@ -1,8 +1,12 @@
+import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import StarField from "@/components/StarField";
 import heroImage from "@/assets/hero-nails-stock.jpg";
 
-const HeroSection = () => (
+const HeroSection = () => {
+  const navigate = useNavigate();
+
+  return (
   <section id="home" className="relative min-h-screen overflow-hidden">
     {/* Full-bleed background image with slow zoom */}
     <img
@@ -39,7 +43,10 @@ const HeroSection = () => (
         </p>
 
         <div className="animate-fade-up-delay-2">
-          <Button className="btn-shimmer rounded-lg bg-primary text-primary-foreground px-10 py-6 text-sm tracking-wider font-medium hover:bg-primary/85 transition-all duration-500 shadow-sm">
+          <Button
+            onClick={() => navigate("/booking")}
+            className="btn-shimmer rounded-lg bg-primary text-primary-foreground px-10 py-6 text-sm tracking-wider font-medium hover:bg-primary/85 transition-all duration-500 shadow-sm"
+          >
             Book an Appointment
           </Button>
         </div>
@@ -53,6 +60,7 @@ const HeroSection = () => (
       </div>
     </div>
   </section>
-);
+  );
+};
 
 export default HeroSection;
