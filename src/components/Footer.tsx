@@ -1,5 +1,4 @@
 import {
-  Sparkles,
   MapPin,
   Phone,
   Instagram,
@@ -38,14 +37,12 @@ const Footer = () => {
         <div className="grid md:grid-cols-4 gap-10 mb-14">
           {/* Brand */}
           <div className="md:col-span-1">
-            <div className="flex items-center gap-2 mb-5">
-              <Sparkles className="h-4 w-4 text-primary" />
-              <span
-                className="text-xl tracking-[0.15em] font-semibold text-foreground"
-                style={{ fontFamily: "'Playfair Display', 'Noto Serif', serif" }}
-              >
-                Estique.
-              </span>
+            <div className="mb-5">
+              <img
+                src="https://res.cloudinary.com/dzzoimn4v/image/upload/v1778645820/estique_logo_transparent_kwyboz.png"
+                alt="Estique"
+                className="h-20 md:h-24 w-auto object-contain"
+              />
             </div>
             <p className="text-muted-foreground text-sm leading-relaxed max-w-xs">
               Your sanctuary for refined nail care and timeless elegance.

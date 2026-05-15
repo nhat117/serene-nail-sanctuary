@@ -61,41 +61,12 @@ const Navbar = () => {
         </ul>
 
         {/* Center Logo */}
-        <Link to="/" className="flex flex-col items-center gap-0.5 scale-[0.85]">
-          {/* Bow/Ribbon SVG */}
-          <svg
-            width="30"
-            height="18"
-            viewBox="0 0 40 24"
-            fill="none"
-            className="text-primary"
-          >
-            <path
-              d="M20 12C20 12 12 4 6 4C2 4 0 7 0 10C0 13 2 16 6 16C12 16 20 12 20 12Z"
-              fill="currentColor"
-              opacity="0.7"
-            />
-            <path
-              d="M20 12C20 12 28 4 34 4C38 4 40 7 40 10C40 13 38 16 34 16C28 16 20 12 20 12Z"
-              fill="currentColor"
-              opacity="0.7"
-            />
-            <path
-              d="M18 12C18 12 16 20 16 22C16 23 17 24 18 24L22 24C23 24 24 23 24 22C24 20 22 12 22 12C22 12 21 13 20 13C19 13 18 12 18 12Z"
-              fill="currentColor"
-              opacity="0.6"
-            />
-            <circle cx="20" cy="12" r="2.5" fill="currentColor" />
-          </svg>
-          <span
-            className="text-xl md:text-2xl tracking-[0.25em] font-semibold text-foreground uppercase"
-            style={{ fontFamily: "'Playfair Display', 'Noto Serif', serif" }}
-          >
-            Estique
-          </span>
-          <span className="text-[9px] tracking-[0.25em] text-muted-foreground font-medium uppercase">
-            Nails & Beauty Artistry
-          </span>
+        <Link to="/" className="flex items-center" aria-label="Estique">
+          <img
+            src="https://res.cloudinary.com/dzzoimn4v/image/upload/v1778645820/estique_logo_transparent_kwyboz.png"
+            alt="Estique"
+            className="h-14 md:h-16 w-auto object-contain"
+          />
         </Link>
 
         {/* Right nav links + CTA — desktop */}
