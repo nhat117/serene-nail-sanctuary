@@ -3,6 +3,7 @@ import { Menu, X } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 
 import { BookOnlineButton } from "@/components/BookingDialog";
+import { ESTIQUE_LOGO_URL } from "@/lib/cloudinary";
 
 const leftLinks = ["Home", "About", "Services", "Gallery", "Studio"];
 const routeLinks: Record<string, string> = {
@@ -60,7 +61,7 @@ const Navbar = () => {
           aria-label="Estique"
         >
           <img
-            src="https://res.cloudinary.com/dzzoimn4v/image/upload/e_colorize:100,co_rgb:CCB68D/v1778645820/estique_logo_transparent_kwyboz.png"
+            src={ESTIQUE_LOGO_URL}
             alt="Estique"
             className="h-16 md:h-20 w-auto object-contain"
           />

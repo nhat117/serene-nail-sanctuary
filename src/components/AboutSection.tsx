@@ -1,7 +1,9 @@
 import { Button } from "@/components/ui/button";
 import StarField from "@/components/StarField";
 import { useScrollReveal } from "@/hooks/useScrollReveal";
-import salonImage from "@/assets/gallery/craftsmanship.jpg";
+import { cld } from "@/lib/cloudinary";
+
+const salonImage = cld("estique/gallery/craftsmanship", { width: 1200 });
 
 const AboutSection = () => {
   const sectionRef = useScrollReveal<HTMLElement>();

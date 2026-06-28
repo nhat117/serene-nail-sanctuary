@@ -2,10 +2,13 @@ import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 import StarField from "@/components/StarField";
 import { useScrollReveal } from "@/hooks/useScrollReveal";
-import serviceManicure from "@/assets/gallery/service-manicure.jpg";
-import serviceGel from "@/assets/gallery/service-gel.jpg";
-import servicePedicure from "@/assets/gallery/service-art.jpg";
-import serviceBridal from "@/assets/gallery/service-bridal.jpg";
+import { cld } from "@/lib/cloudinary";
+
+const g = (name: string) => cld(`estique/gallery/${name}`, { width: 800 });
+const serviceManicure = g("service-manicure");
+const serviceGel = g("service-gel");
+const servicePedicure = g("service-art");
+const serviceBridal = g("service-bridal");
 
 const services = [
   { image: serviceManicure, alt: "Classic French manicure" },

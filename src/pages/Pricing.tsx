@@ -19,7 +19,9 @@ import {
 import TopBar from "@/components/TopBar";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
-import pricingHero from "@/assets/gallery/service-signature.jpg";
+import { cld } from "@/lib/cloudinary";
+
+const pricingHero = cld("estique/gallery/service-signature", { width: 1920 });
 
 const NOTE_ICONS: Record<string, typeof Wallet> = {
   Wallet,

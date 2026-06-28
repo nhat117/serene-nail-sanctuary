@@ -7,28 +7,36 @@ import { useScrollReveal } from "@/hooks/useScrollReveal";
 import TopBar from "@/components/TopBar";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
+import { cld } from "@/lib/cloudinary";
 
-import heroNails from "@/assets/gallery/hero-nails.jpg";
-import heroSecondary from "@/assets/gallery/hero-secondary.jpg";
-import aboutDetail from "@/assets/gallery/about-detail.jpg";
-import signature from "@/assets/gallery/service-signature.jpg";
-import manicure from "@/assets/gallery/service-manicure.jpg";
-import gel from "@/assets/gallery/service-gel.jpg";
-import bridal from "@/assets/gallery/service-bridal.jpg";
-import art from "@/assets/gallery/service-art.jpg";
-import stars from "@/assets/gallery/gallery-stars.jpg";
-import stripes from "@/assets/gallery/gallery-stripes.jpg";
-import polka from "@/assets/gallery/gallery-polka.jpg";
-import cosmic from "@/assets/gallery/gallery-cosmic.jpg";
-import vangogh from "@/assets/gallery/gallery-vangogh.jpg";
-import french from "@/assets/gallery/gallery-french.jpg";
-import green from "@/assets/gallery/gallery-green.jpg";
-import gold from "@/assets/gallery/gallery-gold.jpg";
-import studioWarm from "@/assets/gallery/studio-warm.jpg";
-import studioJewelry from "@/assets/gallery/studio-jewelry.jpg";
-import studioTable from "@/assets/gallery/studio-table.jpg";
-import studioJade from "@/assets/gallery/studio-jade.jpg";
-import studioPlum from "@/assets/gallery/studio-plum.jpg";
+// CDN URL for one gallery image. Width 1200 covers the largest column on
+// 4-up desktop layouts; Cloudinary auto-serves AVIF/WebP via f_auto.
+const g = (name: string) => cld(`estique/gallery/${name}`, { width: 1200 });
+
+const heroNails = g("hero-nails");
+const signature = g("service-signature");
+const manicure = g("service-manicure");
+const gel = g("service-gel");
+const bridal = g("service-bridal");
+const art = g("service-art");
+const stars = g("gallery-stars");
+const stripes = g("gallery-stripes");
+const polka = g("gallery-polka");
+const cosmic = g("gallery-cosmic");
+const vangogh = g("gallery-vangogh");
+const french = g("gallery-french");
+const green = g("gallery-green");
+const gold = g("gallery-gold");
+const studioSign = g("studio-sign");
+const studioLogoWall = g("studio-logo-wall");
+const studioBowSign = g("studio-bow-sign");
+const studioPolishWall = g("studio-polish-wall");
+const studioShelves = g("studio-shelves");
+const studioPedicure = g("studio-pedicure");
+const studioSpa = g("studio-spa");
+const studioDetail = g("studio-detail");
+const studioWorkstation = g("studio-workstation");
+const studioHandpaint = g("studio-handpaint");
 
 // Four clean categories grouped by feel rather than technique:
 //   Signature — showpiece work, gold + jewelry, the "wow" set
@@ -60,14 +68,17 @@ const galleryImages: GalleryItem[] = [
   { src: vangogh, alt: "Starry-night hand-painted nails", category: "Statement" },
   { src: green, alt: "Sheer nails with green floral inlay", category: "Statement" },
 
-  // Studio — atmosphere and in-salon detail
-  { src: heroSecondary, alt: "Layered gold rings and chocolate-tone nails in the studio", category: "Studio" },
-  { src: aboutDetail, alt: "Close work showing delicate gold accents", category: "Studio" },
-  { src: studioWarm, alt: "Warm in-studio detail with chunky knit", category: "Studio" },
-  { src: studioJewelry, alt: "Stacked rings and gold detail at the studio table", category: "Studio" },
-  { src: studioTable, alt: "Finished set resting on the studio table", category: "Studio" },
-  { src: studioJade, alt: "Hands at the studio table with jade-tone nails", category: "Studio" },
-  { src: studioPlum, alt: "Plum-tone set photographed in the studio", category: "Studio" },
+  // Studio — the Estique space, signage, and team at work
+  { src: studioSign, alt: "Estique storefront with brick wall logo and bow sign", category: "Studio" },
+  { src: studioLogoWall, alt: "Estique wall logo in polished brass on white brick", category: "Studio" },
+  { src: studioBowSign, alt: "The Estique bow emblem on the outdoor sign", category: "Studio" },
+  { src: studioPolishWall, alt: "Floor-to-ceiling polish wall inside the studio", category: "Studio" },
+  { src: studioShelves, alt: "Soft pink polish shelves with greenery", category: "Studio" },
+  { src: studioPedicure, alt: "Pedicure chairs lined up in the spa area", category: "Studio" },
+  { src: studioSpa, alt: "Pedicure stations and basins ready for the day", category: "Studio" },
+  { src: studioWorkstation, alt: "Manicure stations with task lamps and supplies", category: "Studio" },
+  { src: studioDetail, alt: "Close-up of a manicurist refining nail shape", category: "Studio" },
+  { src: studioHandpaint, alt: "Hand-painting a nail in progress with fine brushwork", category: "Studio" },
 ];
 
 const categories = [
@@ -230,7 +241,7 @@ const GalleryPage = () => {
             onClick={(e) => e.stopPropagation()}
           >
             <img
-              src={filteredImages[lightboxIndex].src}
+              src={filteredImages[lightboxIndex].src.replace(/,w_\d+/, ",w_1800")}
               alt={filteredImages[lightboxIndex].alt}
               className="max-w-full max-h-[85vh] object-contain rounded-lg"
             />

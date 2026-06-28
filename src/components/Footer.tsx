@@ -8,6 +8,7 @@ import {
 import { Link } from "react-router-dom";
 import StarField from "@/components/StarField";
 import { useBranches } from "@/hooks/useBranches";
+import { ESTIQUE_LOGO_URL } from "@/lib/cloudinary";
 
 const GOOGLE_MAPS_URL = "https://maps.app.goo.gl/xa2tcA4pd8TCwZA57";
 
@@ -39,7 +40,7 @@ const Footer = () => {
           <div className="lg:col-span-1">
             <div className="mb-5">
               <img
-                src="https://res.cloudinary.com/dzzoimn4v/image/upload/e_colorize:100,co_rgb:CCB68D/v1778645820/estique_logo_transparent_kwyboz.png"
+                src={ESTIQUE_LOGO_URL}
                 alt="Estique"
                 className="h-20 md:h-24 w-auto object-contain"
               />

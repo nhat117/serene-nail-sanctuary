@@ -1,7 +1,9 @@
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import StarField from "@/components/StarField";
-import heroImage from "@/assets/hero-nails-stock.jpg";
+import { cld } from "@/lib/cloudinary";
+
+const heroImage = cld("estique/gallery/hero-stock", { width: 1920 });
 
 const HeroSection = () => {
   const navigate = useNavigate();

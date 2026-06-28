@@ -16,7 +16,9 @@ import { BookOnlineButton } from "@/components/BookingDialog";
 import TopBar from "@/components/TopBar";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
-import salonImage from "@/assets/gallery/about-detail.jpg";
+import { cld } from "@/lib/cloudinary";
+
+const salonImage = cld("estique/gallery/about-detail", { width: 1200 });
 
 const LocationPage = () => {
   const heroRef = useScrollReveal<HTMLElement>();

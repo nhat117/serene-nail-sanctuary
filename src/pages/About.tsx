@@ -7,8 +7,10 @@ import TopBar from "@/components/TopBar";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { useBranches } from "@/hooks/useBranches";
-import salonImage from "@/assets/gallery/about-detail.jpg";
-import heroImage from "@/assets/gallery/hero-secondary.jpg";
+import { cld } from "@/lib/cloudinary";
+
+const salonImage = cld("estique/gallery/about-detail", { width: 1200 });
+const heroImage = cld("estique/gallery/hero-secondary", { width: 1200 });
 
 const values = [
   {
