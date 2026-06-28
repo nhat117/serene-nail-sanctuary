@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
+import { BookOnlineButton } from "@/components/BookingDialog";
 import {
   Tabs,
   TabsContent,
@@ -18,6 +19,7 @@ import {
 import TopBar from "@/components/TopBar";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
+import pricingHero from "@/assets/gallery/service-signature.jpg";
 
 const NOTE_ICONS: Record<string, typeof Wallet> = {
   Wallet,
@@ -42,24 +44,37 @@ const PricingPage = () => {
       {/* Page Hero */}
       <section
         ref={heroRef}
-        className="py-20 md:py-[100px] bg-white text-center"
+        className="relative py-24 md:py-[120px] text-center overflow-hidden"
       >
-        <div className="container mx-auto px-4">
+        <div
+          className="absolute inset-0 bg-cover bg-center"
+          style={{ backgroundImage: `url(${pricingHero})` }}
+          aria-hidden="true"
+        />
+        <div
+          className="absolute inset-0"
+          style={{
+            background:
+              "linear-gradient(180deg, hsl(var(--warm-ivory) / 0.78) 0%, hsl(var(--warm-ivory) / 0.92) 70%, hsl(var(--warm-ivory)) 100%)",
+          }}
+          aria-hidden="true"
+        />
+        <div className="relative container mx-auto px-4">
           <div className="flex items-center justify-center gap-6 mb-4 scroll-reveal">
             <div className="h-px w-16 bg-primary/40" />
             <p className="uppercase tracking-[0.3em] text-primary text-xs font-semibold">
-              Price List
+              Our Menu
             </p>
             <div className="h-px w-16 bg-primary/40" />
           </div>
 
           <h1 className="text-4xl md:text-5xl lg:text-6xl font-semibold mb-6 scroll-reveal scroll-reveal-delay-1">
-            Pricing
+            Services & Pricing
           </h1>
 
-          <p className="text-muted-foreground max-w-xl mx-auto text-base md:text-lg leading-relaxed scroll-reveal scroll-reveal-delay-2">
-            Transparent pricing for our complete menu of nail and waxing
-            services. All prices are listed in AUD.
+          <p className="text-foreground/70 max-w-xl mx-auto text-base md:text-lg leading-relaxed scroll-reveal scroll-reveal-delay-2">
+            Our full menu of nail and waxing services, with clear, honest
+            pricing. All prices are in AUD.
           </p>
         </div>
       </section>
@@ -102,22 +117,17 @@ const PricingPage = () => {
       <section className="py-16 md:py-20 bg-background text-center">
         <div className="container mx-auto px-4">
           <h2 className="text-2xl md:text-3xl font-semibold mb-4">
-            Ready to Book?
+            Book your visit
           </h2>
           <p className="text-muted-foreground mb-8 max-w-md mx-auto">
-            Reserve your treatment with our team and experience refined beauty
-            firsthand.
+            Choose a treatment, pick a time, and we'll see you soon.
           </p>
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-            <Link to="/booking">
-              <Button className="btn-shimmer rounded-lg bg-primary text-primary-foreground text-xs tracking-wider px-6 py-2 hover:bg-primary/85 transition-all duration-500">
-                Book an Appointment
-              </Button>
-            </Link>
+            <BookOnlineButton>Book an Appointment</BookOnlineButton>
             <Link to="/">
               <Button
                 variant="outline"
-                className="rounded-none border-foreground/30 text-foreground px-8 py-5 text-sm tracking-[0.1em] font-medium hover:bg-foreground hover:text-background transition-all duration-500"
+                className="rounded-lg border-foreground/30 text-foreground px-10 py-6 text-base tracking-[0.1em] font-medium hover:bg-foreground hover:text-background transition-all duration-500"
               >
                 <ArrowLeft className="h-3.5 w-3.5 mr-2" />
                 Back to Home

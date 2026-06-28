@@ -1,7 +1,7 @@
 import { Button } from "@/components/ui/button";
 import StarField from "@/components/StarField";
 import { useScrollReveal } from "@/hooks/useScrollReveal";
-import salonImage from "@/assets/salon-interior.jpg";
+import salonImage from "@/assets/gallery/craftsmanship.jpg";
 
 const AboutSection = () => {
   const sectionRef = useScrollReveal<HTMLElement>();
@@ -29,10 +29,10 @@ const AboutSection = () => {
               animation: "glowPulse 7s ease-in-out 1s infinite",
             }}
           />
-          <div className="aspect-[4/5] rounded-lg overflow-hidden shadow-xl shadow-foreground/5 relative z-[1]">
+          <div className="aspect-[4/5] rounded-lg overflow-hidden shadow-soft-lg relative z-[1]">
             <img
               src={salonImage}
-              alt="Elegant salon interior with beige chair and gold lamp"
+              alt="A manicurist at the table, working in close detail on a client's hands"
               loading="lazy"
               className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
             />
@@ -42,15 +42,16 @@ const AboutSection = () => {
         {/* Content — slides in from right */}
         <div className="lg:pl-4 scroll-reveal-right scroll-reveal-delay-2">
           <h2 className="text-3xl md:text-4xl lg:text-5xl font-semibold mb-8 leading-tight">
-            Refined Beauty & Elegance
+            The Estique<br />
+            <span className="italic font-medium text-foreground/80">signature</span>
           </h2>
           <p className="text-muted-foreground leading-relaxed mb-10 text-base md:text-lg">
-            At Estique, we offer a sanctuary of serene sophistication. Indulge in
-            luxurious nail, skincare, and beauty services tailored to perfection.
-            Our tranquil space and meticulous attention to detail ensure an
-            experience of true luxury.
+            Every set we finish carries the Estique touch — delicate gold
+            detail, soft tones, and lines drawn by hand. Our artists take the
+            time each set deserves, so the result is something you'll be quiet
+            about, but never stop noticing.
           </p>
-          <Button className="btn-shimmer rounded-lg bg-primary text-primary-foreground px-10 py-5 text-sm tracking-wider font-medium hover:bg-primary/85 transition-all duration-500 shadow-sm">
+          <Button className="btn-shimmer rounded-lg bg-primary text-primary-foreground px-12 py-6 text-base tracking-wider font-medium hover:bg-primary transition-all duration-500 shadow-soft">
             Learn More
           </Button>
         </div>

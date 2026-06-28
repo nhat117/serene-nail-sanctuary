@@ -27,25 +27,24 @@ const HeroSection = () => {
     {/* Text overlay */}
     <div className="relative z-10 container mx-auto px-4 lg:px-8 flex items-center min-h-screen">
       <div className="max-w-2xl py-20">
-        <p className="uppercase tracking-[0.3em] text-white text-sm md:text-base font-semibold mb-6 animate-letter-reveal">
-          Welcome to Estique
+        <p className="uppercase tracking-[0.3em] text-white text-lg md:text-xl lg:text-2xl font-semibold mb-6 animate-letter-reveal">
+          Welcome to
         </p>
-        <h1 className="text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-semibold leading-[1.08] mb-8 text-white animate-fade-up">
-          Experience
-          <br />
-          Quiet Luxury
+        <h1 className="text-5xl md:text-7xl lg:text-8xl xl:text-9xl font-semibold leading-[1.08] mb-8 text-white animate-fade-up">
+          Estique
         </h1>
 
-        <p className="text-white/70 max-w-md mb-10 text-base md:text-lg leading-relaxed animate-fade-up-delay">
-          Welcome to Estique, where sophistication meets tranquility. Enjoy
-          bespoke nail care and beauty treatments in an elegant, relaxing
-          atmosphere.
+        <p className="text-white/80 max-w-xl mb-10 text-lg md:text-xl lg:text-2xl leading-relaxed animate-fade-up-delay">
+          Discover a space where exceptional nail artistry meets thoughtful
+          care. From timeless manicures to indulgent beauty treatments, every
+          visit is designed to leave you feeling polished, confident, and
+          completely relaxed.
         </p>
 
         <div className="animate-fade-up-delay-2">
           <Button
             onClick={() => navigate("/booking")}
-            className="btn-shimmer rounded-lg bg-primary text-primary-foreground px-10 py-6 text-sm tracking-wider font-medium hover:bg-primary/85 transition-all duration-500 shadow-sm"
+            className="btn-shimmer rounded-lg bg-primary text-primary-foreground px-12 py-7 text-base tracking-wider font-medium hover:bg-primary transition-all duration-500 shadow-sm"
           >
             Book an Appointment
           </Button>

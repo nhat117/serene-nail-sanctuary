@@ -2,84 +2,72 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 import { X, ArrowLeft, ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { BookOnlineButton } from "@/components/BookingDialog";
 import { useScrollReveal } from "@/hooks/useScrollReveal";
 import TopBar from "@/components/TopBar";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 
-const galleryImages = [
-  {
-    src: "https://images.unsplash.com/photo-1604654894610-df63bc536371?w=800&q=80&fit=crop",
-    alt: "Nail art with dark and gold accents",
-    category: "Nail Art",
-    span: "row-span-2",
-  },
-  {
-    src: "https://images.unsplash.com/photo-1457972729786-0411a3b2b626?w=800&q=80&fit=crop",
-    alt: "Manicure in progress at salon",
-    category: "Manicure",
-    span: "",
-  },
-  {
-    src: "https://images.unsplash.com/photo-1519014816548-bf5fe059798b?w=800&q=80&fit=crop",
-    alt: "Classic red nail design",
-    category: "Nail Art",
-    span: "",
-  },
-  {
-    src: "https://images.unsplash.com/photo-1632345031435-8727f6897d53?w=800&q=80&fit=crop",
-    alt: "Gel extensions application",
-    category: "Extensions",
-    span: "row-span-2",
-  },
-  {
-    src: "https://images.unsplash.com/photo-1607779097040-26e80aa78e66?w=800&q=80&fit=crop",
-    alt: "Pastel nail art with glitter accents",
-    category: "Nail Art",
-    span: "",
-  },
-  {
-    src: "https://images.unsplash.com/photo-1604902396830-aca29e19b067?w=800&q=80&fit=crop",
-    alt: "Gel nails closeup on pink background",
-    category: "Gel Nails",
-    span: "",
-  },
-  {
-    src: "https://images.unsplash.com/photo-1519415510236-718bdfcd89c8?w=800&q=80&fit=crop",
-    alt: "Luxury pedicure spa treatment with orchids",
-    category: "Pedicure",
-    span: "row-span-2",
-  },
-  {
-    src: "https://images.unsplash.com/photo-1573461160327-b450ce3d8e7f?w=800&q=80&fit=crop",
-    alt: "Hand care and cuticle oil treatment",
-    category: "Hand Care",
-    span: "",
-  },
-  {
-    src: "https://images.unsplash.com/photo-1560066984-138dadb4c035?w=800&q=80&fit=crop",
-    alt: "Elegant salon interior",
-    category: "Our Salon",
-    span: "",
-  },
-  {
-    src: "https://images.unsplash.com/photo-1599948128020-9a44505b0d1b?w=800&q=80&fit=crop",
-    alt: "Nail polish collection display",
-    category: "Products",
-    span: "",
-  },
-  {
-    src: "https://images.unsplash.com/photo-1590439471364-192aa70c0b53?w=800&q=80&fit=crop",
-    alt: "Spa flat lay with luxury accessories",
-    category: "Spa",
-    span: "row-span-2",
-  },
-  {
-    src: "https://images.unsplash.com/photo-1631729371254-42c2892f0e6e?w=800&q=80&fit=crop",
-    alt: "Luxury beauty products",
-    category: "Products",
-    span: "",
-  },
+import heroNails from "@/assets/gallery/hero-nails.jpg";
+import heroSecondary from "@/assets/gallery/hero-secondary.jpg";
+import aboutDetail from "@/assets/gallery/about-detail.jpg";
+import signature from "@/assets/gallery/service-signature.jpg";
+import manicure from "@/assets/gallery/service-manicure.jpg";
+import gel from "@/assets/gallery/service-gel.jpg";
+import bridal from "@/assets/gallery/service-bridal.jpg";
+import art from "@/assets/gallery/service-art.jpg";
+import stars from "@/assets/gallery/gallery-stars.jpg";
+import stripes from "@/assets/gallery/gallery-stripes.jpg";
+import polka from "@/assets/gallery/gallery-polka.jpg";
+import cosmic from "@/assets/gallery/gallery-cosmic.jpg";
+import vangogh from "@/assets/gallery/gallery-vangogh.jpg";
+import french from "@/assets/gallery/gallery-french.jpg";
+import green from "@/assets/gallery/gallery-green.jpg";
+import gold from "@/assets/gallery/gallery-gold.jpg";
+import studioWarm from "@/assets/gallery/studio-warm.jpg";
+import studioJewelry from "@/assets/gallery/studio-jewelry.jpg";
+import studioTable from "@/assets/gallery/studio-table.jpg";
+import studioJade from "@/assets/gallery/studio-jade.jpg";
+import studioPlum from "@/assets/gallery/studio-plum.jpg";
+
+// Four clean categories grouped by feel rather than technique:
+//   Signature — showpiece work, gold + jewelry, the "wow" set
+//   Classic   — clean French tips and polished, everyday-elegant nails
+//   Statement — hand-painted art and themed designs
+//   Studio    — atmosphere shots from in the salon
+type Category = "Signature" | "Classic" | "Statement" | "Studio";
+
+type GalleryItem = { src: string; alt: string; category: Category };
+
+const galleryImages: GalleryItem[] = [
+  // Signature — gold detail, layered jewelry, the headline work
+  { src: heroNails, alt: "Gold-accented signature nail set", category: "Signature" },
+  { src: gold, alt: "Stacked gold detail with soft French tips", category: "Signature" },
+  { src: signature, alt: "Mixed-finish signature set with crystal accents", category: "Signature" },
+  { src: bridal, alt: "Bridal-style nails with 3D floral detail", category: "Signature" },
+
+  // Classic — French tips and clean lines
+  { src: manicure, alt: "Classic French manicure", category: "Classic" },
+  { src: french, alt: "Soft French tips with subtle accents", category: "Classic" },
+  { src: polka, alt: "French tips with playful polka detail", category: "Classic" },
+  { src: gel, alt: "Delicate floral gel design", category: "Classic" },
+
+  // Statement — hand-painted and themed
+  { src: art, alt: "Plum and silver hand-painted artistry", category: "Statement" },
+  { src: stars, alt: "Burgundy and cream stars with polka dots", category: "Statement" },
+  { src: stripes, alt: "Pastel stripes and stars on almond nails", category: "Statement" },
+  { src: cosmic, alt: "Cosmic-themed nail art", category: "Statement" },
+  { src: vangogh, alt: "Starry-night hand-painted nails", category: "Statement" },
+  { src: green, alt: "Sheer nails with green floral inlay", category: "Statement" },
+
+  // Studio — atmosphere and in-salon detail
+  { src: heroSecondary, alt: "Layered gold rings and chocolate-tone nails in the studio", category: "Studio" },
+  { src: aboutDetail, alt: "Close work showing delicate gold accents", category: "Studio" },
+  { src: studioWarm, alt: "Warm in-studio detail with chunky knit", category: "Studio" },
+  { src: studioJewelry, alt: "Stacked rings and gold detail at the studio table", category: "Studio" },
+  { src: studioTable, alt: "Finished set resting on the studio table", category: "Studio" },
+  { src: studioJade, alt: "Hands at the studio table with jade-tone nails", category: "Studio" },
+  { src: studioPlum, alt: "Plum-tone set photographed in the studio", category: "Studio" },
 ];
 
 const categories = [
@@ -89,7 +77,6 @@ const categories = [
 
 const GalleryPage = () => {
   const heroRef = useScrollReveal<HTMLElement>();
-  const gridRef = useScrollReveal<HTMLDivElement>();
   const [activeCategory, setActiveCategory] = useState("All");
   const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
 
@@ -134,8 +121,8 @@ const GalleryPage = () => {
           </h1>
 
           <p className="text-muted-foreground max-w-xl mx-auto text-base md:text-lg leading-relaxed mb-12 scroll-reveal scroll-reveal-delay-2">
-            A curated collection of our finest work — from minimalist elegance to
-            intricate nail art, each creation tells a story of craftsmanship.
+            A small selection of recent work — from clean French tips to
+            hand-painted detail, all done by the team at Estique.
           </p>
 
           {/* Category filters */}
@@ -144,7 +131,7 @@ const GalleryPage = () => {
               <button
                 key={cat}
                 onClick={() => setActiveCategory(cat)}
-                className={`px-5 py-2 text-xs font-medium tracking-[0.1em] uppercase rounded-none border transition-all duration-300 ${
+                className={`px-5 py-2 text-xs font-medium tracking-[0.1em] uppercase rounded-full border transition-all duration-300 ${
                   activeCategory === cat
                     ? "bg-primary text-primary-foreground border-primary"
                     : "bg-transparent text-foreground/60 border-border hover:border-primary hover:text-primary"
@@ -158,13 +145,13 @@ const GalleryPage = () => {
       </section>
 
       {/* Masonry Gallery Grid */}
-      <section className="py-10 md:py-16 bg-accent/20" ref={gridRef}>
+      <section className="py-10 md:py-16 bg-accent/20">
         <div className="container mx-auto px-4">
           <div className="columns-1 sm:columns-2 lg:columns-3 xl:columns-4 gap-4 space-y-4">
             {filteredImages.map((image, index) => (
               <div
                 key={image.src}
-                className={`group relative break-inside-avoid overflow-hidden rounded-lg cursor-pointer scroll-reveal scroll-reveal-delay-${Math.min((index % 4) + 1, 4)}`}
+                className="group relative break-inside-avoid overflow-hidden rounded-lg cursor-pointer animate-fade-up"
                 onClick={() => openLightbox(index)}
               >
                 <img
@@ -192,22 +179,17 @@ const GalleryPage = () => {
       <section className="py-16 md:py-20 bg-background text-center">
         <div className="container mx-auto px-4">
           <h2 className="text-2xl md:text-3xl font-semibold mb-4">
-            Love What You See?
+            See something you'd like
           </h2>
           <p className="text-muted-foreground mb-8 max-w-md mx-auto">
-            Book your appointment and let our artists create something beautiful
-            for you.
+            Bring an idea, or let us suggest one. Book a time that suits you.
           </p>
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-            <Link to="/booking">
-              <Button className="btn-shimmer rounded-lg bg-primary text-primary-foreground text-xs tracking-wider px-6 py-2 hover:bg-primary/85 transition-all duration-500">
-                Book an Appointment
-              </Button>
-            </Link>
+            <BookOnlineButton>Book an Appointment</BookOnlineButton>
             <Link to="/">
               <Button
                 variant="outline"
-                className="rounded-none border-foreground/30 text-foreground px-8 py-5 text-sm tracking-[0.1em] font-medium hover:bg-foreground hover:text-background transition-all duration-500"
+                className="rounded-lg border-foreground/30 text-foreground px-10 py-6 text-base tracking-[0.1em] font-medium hover:bg-foreground hover:text-background transition-all duration-500"
               >
                 <ArrowLeft className="h-3.5 w-3.5 mr-2" />
                 Back to Home
@@ -248,9 +230,9 @@ const GalleryPage = () => {
             onClick={(e) => e.stopPropagation()}
           >
             <img
-              src={filteredImages[lightboxIndex].src.replace("w=800", "w=1400")}
+              src={filteredImages[lightboxIndex].src}
               alt={filteredImages[lightboxIndex].alt}
-              className="max-w-full max-h-[85vh] object-contain rounded-sm"
+              className="max-w-full max-h-[85vh] object-contain rounded-lg"
             />
             <div className="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-black/60 to-transparent">
               <span className="text-white/90 text-sm font-medium">

@@ -2,7 +2,7 @@ import { useCallback, useMemo, useState } from "react";
 import { Link, useSearchParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { addMinutes, format, isBefore, isToday, startOfDay } from "date-fns";
-import { ArrowLeft, ArrowRight, CalendarIcon, Check, Loader2 } from "lucide-react";
+import { ArrowLeft, ArrowRight, CalendarIcon, Check, Loader2, Search, X } from "lucide-react";
 
 import { supabase, TENANT_ID } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
@@ -10,6 +10,12 @@ import { Input } from "@/components/ui/input";
 import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
 import { cn } from "@/lib/utils";
 import { useToast } from "@/hooks/use-toast";
 import { bookingCustomerSchema, escapeHtml, validateField } from "@/lib/validation";
@@ -23,6 +29,10 @@ type Service = {
   duration_minutes: number;
   price: number;
   is_active: boolean;
+  category?: string | null;
+  price_label?: string | null;
+  disclaimer?: string | null;
+  sort_order?: number;
 };
 
 type Therapist = {
@@ -41,7 +51,48 @@ const BUFFER_MINUTES = 15;
 const formatPrice = (n: number) =>
   new Intl.NumberFormat("en-AU", { style: "currency", currency: "AUD", maximumFractionDigits: 0 }).format(n);
 
-const Booking = () => {
+const displayPrice = (s: { price: number; price_label?: string | null }) =>
+  s.price_label && s.price_label.trim() ? s.price_label : formatPrice(s.price);
+
+const CATEGORY_ORDER = [
+  "Face Wax",
+  "Body Wax",
+  "Nail Extension / Acrylic",
+  "SNS",
+  "Nail Enhancement",
+  "Add-ons",
+  "Hands — Normal Polish",
+  "Hands — Shellac",
+  "Nail Art",
+  "Feet — Normal Polish",
+  "Feet — Shellac & Enhancement",
+];
+
+const groupByCategory = (items: Service[]) => {
+  const map = new Map<string, Service[]>();
+  for (const s of items) {
+    const cat = s.category ?? "Other";
+    if (!map.has(cat)) map.set(cat, []);
+    map.get(cat)!.push(s);
+  }
+  const ordered: Array<{ category: string; items: Service[] }> = [];
+  for (const cat of CATEGORY_ORDER) {
+    const list = map.get(cat);
+    if (list?.length) ordered.push({ category: cat, items: list });
+    map.delete(cat);
+  }
+  for (const [cat, list] of map) ordered.push({ category: cat, items: list });
+  return ordered;
+};
+
+type BookingProps = {
+  /** When true, skips outer TopBar/Navbar chrome and full-page sizing — for use inside a dialog. */
+  compact?: boolean;
+  /** Optional callback fired when the booking flow completes (so a parent dialog can react). */
+  onComplete?: () => void;
+};
+
+const Booking = ({ compact = false, onComplete }: BookingProps = {}) => {
   const [searchParams] = useSearchParams();
   const { toast } = useToast();
 
@@ -60,6 +111,8 @@ const Booking = () => {
   const [redirectingToPayment, setRedirectingToPayment] = useState(false);
   const [fieldErrors, setFieldErrors] = useState<Record<string, string | null>>({});
   const [touched, setTouched] = useState<Record<string, boolean>>({});
+  const [serviceSearch, setServiceSearch] = useState("");
+  const [openCategories, setOpenCategories] = useState<string[] | null>(null);
 
   const handleBlur = useCallback(
     (field: "customerName" | "customerPhone" | "customerEmail", value: string) => {
@@ -98,7 +151,11 @@ const Booking = () => {
   const { data: services } = useQuery({
     queryKey: ["services"],
     queryFn: async () => {
-      const { data, error } = await supabase.from("services").select("*").eq("is_active", true);
+      const { data, error } = await supabase
+        .from("services")
+        .select("*")
+        .eq("is_active", true)
+        .order("sort_order");
       if (error) throw error;
       return (data ?? []) as Service[];
     },
@@ -455,7 +512,12 @@ const Booking = () => {
 
   if (redirectingToPayment) {
     return (
-      <div className="min-h-screen bg-background flex items-center justify-center p-4">
+      <div
+        className={cn(
+          "flex items-center justify-center p-4",
+          compact ? "min-h-[60vh]" : "min-h-screen bg-background",
+        )}
+      >
         <div className="max-w-md w-full text-center space-y-6">
           <Loader2 className="h-8 w-8 animate-spin mx-auto text-primary" />
           <h1 className="text-2xl font-light" style={{ fontFamily: "'Noto Serif', serif" }}>
@@ -469,7 +531,12 @@ const Booking = () => {
 
   if (bookingComplete) {
     return (
-      <div className="min-h-screen bg-background flex items-center justify-center p-4">
+      <div
+        className={cn(
+          "flex items-center justify-center p-4",
+          compact ? "min-h-[60vh]" : "min-h-screen bg-background",
+        )}
+      >
         <div className="max-w-md w-full text-center space-y-8">
           <div className="mx-auto w-16 h-16 rounded-full border-2 border-primary/30 flex items-center justify-center">
             <Check className="h-7 w-7 text-primary" />
@@ -497,30 +564,55 @@ const Booking = () => {
               </>
             )}
           </div>
-          <Link to="/">
-            <Button className="rounded-lg text-xs tracking-[0.2em] uppercase px-10 h-11">Return home</Button>
-          </Link>
+          {compact ? (
+            <Button
+              onClick={onComplete}
+              className="rounded-lg text-xs tracking-[0.2em] uppercase px-10 h-11"
+            >
+              Done
+            </Button>
+          ) : (
+            <Link to="/">
+              <Button className="rounded-lg text-xs tracking-[0.2em] uppercase px-10 h-11">
+                Return home
+              </Button>
+            </Link>
+          )}
         </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-background">
-      <TopBar />
-      <Navbar />
+    <div className={cn(!compact && "min-h-screen bg-background")}>
+      {!compact && (
+        <>
+          <TopBar />
+          <Navbar />
+        </>
+      )}
 
-      <div className="pt-8 sm:pt-12 pb-16 max-w-lg mx-auto px-4 sm:px-6">
-        <Link
-          to="/"
-          className="inline-flex items-center gap-1.5 text-xs tracking-[0.15em] uppercase text-muted-foreground hover:text-foreground transition-colors mb-8"
-        >
-          <ArrowLeft className="h-3.5 w-3.5" /> Home
-        </Link>
+      <div
+        className={cn(
+          "max-w-lg mx-auto",
+          compact ? "px-1 pb-2" : "pt-8 sm:pt-12 pb-16 px-4 sm:px-6",
+        )}
+      >
+        {!compact && (
+          <Link
+            to="/"
+            className="inline-flex items-center gap-1.5 text-xs tracking-[0.15em] uppercase text-muted-foreground hover:text-foreground transition-colors mb-8"
+          >
+            <ArrowLeft className="h-3.5 w-3.5" /> Home
+          </Link>
+        )}
 
-        <div className="mb-10">
+        <div className={compact ? "mb-6" : "mb-10"}>
           <h1
-            className="text-3xl sm:text-4xl font-light leading-tight mb-2"
+            className={cn(
+              "font-light leading-tight mb-2",
+              compact ? "text-2xl" : "text-3xl sm:text-4xl",
+            )}
             style={{ fontFamily: "'Noto Serif', serif" }}
           >
             Reserve your appointment
@@ -552,59 +644,40 @@ const Booking = () => {
         {/* Step 1 */}
         {step === 1 && (
           <div className="space-y-6">
-            <div>
-              <p className="text-[10px] tracking-[0.25em] uppercase text-muted-foreground mb-4">Primary service</p>
-              <div className="space-y-2">
-                {services?.map((service) => (
-                  <button
-                    key={service.id}
-                    onClick={() => {
-                      setSelectedService(service.id);
-                      setSelectedAddOns((prev) => prev.filter((id) => id !== service.id));
-                    }}
-                    className={cn(
-                      "w-full text-left p-4 sm:p-5 border transition-all duration-200",
-                      selectedService === service.id
-                        ? "border-primary bg-primary/[0.03]"
-                        : "border-border/60 hover:border-primary/40",
-                    )}
-                  >
-                    <div className="flex justify-between items-start gap-3">
-                      <div className="space-y-1">
-                        <div className="text-sm sm:text-base font-light">{service.name}</div>
-                        {service.description && (
-                          <div className="text-xs text-muted-foreground leading-relaxed">{service.description}</div>
-                        )}
-                      </div>
-                      <div className="text-right shrink-0">
-                        <div className="text-sm font-light">{formatPrice(service.price)}</div>
-                        <div className="text-[10px] text-muted-foreground">{service.duration_minutes} min</div>
-                      </div>
-                    </div>
-                  </button>
-                ))}
-                {!services && (
-                  <div className="text-sm text-muted-foreground py-6 text-center">Loading services…</div>
-                )}
-              </div>
-            </div>
+            <ServicePicker
+              services={services}
+              selectedService={selectedService}
+              onSelect={(id) => {
+                setSelectedService(id);
+                setSelectedAddOns((prev) => prev.filter((x) => x !== id));
+              }}
+              search={serviceSearch}
+              setSearch={setServiceSearch}
+              openCategories={openCategories}
+              setOpenCategories={setOpenCategories}
+            />
 
-            {selectedService && services && services.filter((s) => s.id !== selectedService).length > 0 && (
-              <div>
-                <p className="text-[10px] tracking-[0.25em] uppercase text-muted-foreground mb-4">
-                  Add-ons (optional)
-                </p>
-                <div className="space-y-2">
-                  {services
-                    .filter((s) => s.id !== selectedService)
-                    .map((service) => {
+            {selectedService && services && (() => {
+              const addOns = services.filter(
+                (s) => s.category === "Add-ons" && s.id !== selectedService,
+              );
+              if (addOns.length === 0) return null;
+              return (
+                <div>
+                  <p className="text-[10px] tracking-[0.25em] uppercase text-muted-foreground mb-4">
+                    Add-ons (optional)
+                  </p>
+                  <div className="space-y-2">
+                    {addOns.map((service) => {
                       const isSelected = selectedAddOns.includes(service.id);
                       return (
                         <button
                           key={service.id}
                           onClick={() =>
                             setSelectedAddOns((prev) =>
-                              isSelected ? prev.filter((id) => id !== service.id) : [...prev, service.id],
+                              isSelected
+                                ? prev.filter((id) => id !== service.id)
+                                : [...prev, service.id],
                             )
                           }
                           className={cn(
@@ -630,16 +703,17 @@ const Booking = () => {
                               )}
                             </div>
                             <div className="text-right shrink-0">
-                              <div className="text-xs font-light">{formatPrice(service.price)}</div>
+                              <div className="text-xs font-light tabular-nums">{displayPrice(service)}</div>
                               <div className="text-[10px] text-muted-foreground">{service.duration_minutes} min</div>
                             </div>
                           </div>
                         </button>
                       );
                     })}
+                  </div>
                 </div>
-              </div>
-            )}
+              );
+            })()}
 
             {selectedService && (
               <div className="flex items-center justify-between pt-4 border-t border-border/40">
@@ -942,6 +1016,165 @@ const Booking = () => {
           </div>
         )}
       </div>
+    </div>
+  );
+};
+
+type ServicePickerProps = {
+  services: Service[] | undefined;
+  selectedService: string;
+  onSelect: (id: string) => void;
+  search: string;
+  setSearch: (v: string) => void;
+  openCategories: string[] | null;
+  setOpenCategories: (v: string[] | null) => void;
+};
+
+const ServicePicker = ({
+  services,
+  selectedService,
+  onSelect,
+  search,
+  setSearch,
+  openCategories,
+  setOpenCategories,
+}: ServicePickerProps) => {
+  const trimmed = search.trim().toLowerCase();
+  const isSearching = trimmed.length > 0;
+
+  const filteredGroups = useMemo(() => {
+    if (!services) return [];
+    const filtered = isSearching
+      ? services.filter(
+          (s) =>
+            s.name.toLowerCase().includes(trimmed) ||
+            (s.category ?? "").toLowerCase().includes(trimmed),
+        )
+      : services;
+    return groupByCategory(filtered);
+  }, [services, isSearching, trimmed]);
+
+  const expandedValue = useMemo(() => {
+    if (isSearching) return filteredGroups.map((g) => g.category);
+    if (openCategories !== null) return openCategories;
+    if (selectedService && services) {
+      const sel = services.find((s) => s.id === selectedService);
+      if (sel?.category) return [sel.category];
+    }
+    return filteredGroups[0] ? [filteredGroups[0].category] : [];
+  }, [isSearching, filteredGroups, openCategories, selectedService, services]);
+
+  if (!services) {
+    return (
+      <div className="text-sm text-muted-foreground py-6 text-center">Loading services…</div>
+    );
+  }
+
+  return (
+    <div>
+      <p className="text-[10px] tracking-[0.25em] uppercase text-muted-foreground mb-3">
+        Primary service
+      </p>
+
+      <div className="relative mb-4">
+        <Search className="h-3.5 w-3.5 absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
+        <Input
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          placeholder="Search services…"
+          className="pl-9 pr-9 h-10 rounded-lg border-border/60 font-light"
+        />
+        {search && (
+          <button
+            type="button"
+            onClick={() => setSearch("")}
+            className="absolute right-2 top-1/2 -translate-y-1/2 p-1 text-muted-foreground hover:text-foreground"
+            aria-label="Clear search"
+          >
+            <X className="h-3.5 w-3.5" />
+          </button>
+        )}
+      </div>
+
+      {filteredGroups.length === 0 ? (
+        <div className="text-sm text-muted-foreground py-8 text-center border border-dashed border-border/60 rounded-lg">
+          No services match "{search}".
+        </div>
+      ) : (
+        <Accordion
+          type="multiple"
+          value={expandedValue}
+          onValueChange={(v) => {
+            if (!isSearching) setOpenCategories(v);
+          }}
+          className="space-y-2"
+        >
+          {filteredGroups.map((group) => {
+            const containsSelected = group.items.some((s) => s.id === selectedService);
+            return (
+              <AccordionItem
+                key={group.category}
+                value={group.category}
+                className="border border-border/60 rounded-lg overflow-hidden data-[state=open]:border-primary/40"
+              >
+                <AccordionTrigger className="px-4 py-3 hover:no-underline hover:bg-accent/30 [&[data-state=open]]:bg-accent/20">
+                  <div className="flex items-center justify-between w-full pr-2 gap-3">
+                    <span className="text-sm font-medium tracking-wide text-left">
+                      {group.category}
+                    </span>
+                    <div className="flex items-center gap-2 shrink-0">
+                      {containsSelected && (
+                        <span className="text-[10px] uppercase tracking-[0.15em] text-primary font-semibold">
+                          Selected
+                        </span>
+                      )}
+                      <span className="text-xs text-muted-foreground tabular-nums">
+                        ({group.items.length})
+                      </span>
+                    </div>
+                  </div>
+                </AccordionTrigger>
+                <AccordionContent className="px-3 pb-3 pt-1">
+                  <div className="space-y-1.5">
+                    {group.items.map((service) => (
+                      <button
+                        key={service.id}
+                        type="button"
+                        onClick={() => onSelect(service.id)}
+                        className={cn(
+                          "w-full text-left p-3 sm:p-4 border rounded-md transition-all duration-200",
+                          selectedService === service.id
+                            ? "border-primary bg-primary/[0.04]"
+                            : "border-border/60 hover:border-primary/40",
+                        )}
+                      >
+                        <div className="flex justify-between items-start gap-3">
+                          <div className="space-y-1 min-w-0">
+                            <div className="text-sm font-light leading-tight">{service.name}</div>
+                            {service.disclaimer && (
+                              <div className="text-[11px] text-muted-foreground italic leading-relaxed">
+                                {service.disclaimer}
+                              </div>
+                            )}
+                          </div>
+                          <div className="text-right shrink-0">
+                            <div className="text-sm font-light tabular-nums">
+                              {displayPrice(service)}
+                            </div>
+                            <div className="text-[10px] text-muted-foreground">
+                              {service.duration_minutes} min
+                            </div>
+                          </div>
+                        </div>
+                      </button>
+                    ))}
+                  </div>
+                </AccordionContent>
+              </AccordionItem>
+            );
+          })}
+        </Accordion>
+      )}
     </div>
   );
 };

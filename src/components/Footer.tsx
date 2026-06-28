@@ -3,18 +3,21 @@ import {
   Phone,
   Instagram,
   Facebook,
+  ExternalLink,
 } from "lucide-react";
 import { Link } from "react-router-dom";
 import StarField from "@/components/StarField";
 import { useBranches } from "@/hooks/useBranches";
+
+const GOOGLE_MAPS_URL = "https://maps.app.goo.gl/xa2tcA4pd8TCwZA57";
 
 const quickLinks = [
   { label: "Home", to: "/" },
   { label: "About", to: "/about" },
   { label: "Services", to: "/services" },
   { label: "Gallery", to: "/gallery" },
-  { label: "Pricing", to: "/pricing" },
-  { label: "Location", to: "/location" },
+  { label: "Studio", to: "/studio" },
+  { label: "Book Online", to: "/booking" },
 ];
 
 const Footer = () => {
@@ -27,26 +30,23 @@ const Footer = () => {
     : null;
 
   return (
-    <footer
-      id="contact"
-      className="relative py-20"
-      style={{ backgroundColor: "#F5F0EB" }}
-    >
+    <footer id="contact" className="relative py-20 bg-white/70 backdrop-blur-md">
       <StarField count={10} colorClass="bg-primary/10" />
       <div className="container mx-auto px-4">
-        <div className="grid md:grid-cols-4 gap-10 mb-14">
-          {/* Brand */}
-          <div className="md:col-span-1">
+        <div className="grid md:grid-cols-2 lg:grid-cols-5 gap-10 mb-14">
+
+          {/* Brand — spans 1 col */}
+          <div className="lg:col-span-1">
             <div className="mb-5">
               <img
-                src="https://res.cloudinary.com/dzzoimn4v/image/upload/v1778645820/estique_logo_transparent_kwyboz.png"
+                src="https://res.cloudinary.com/dzzoimn4v/image/upload/e_colorize:100,co_rgb:CCB68D/v1778645820/estique_logo_transparent_kwyboz.png"
                 alt="Estique"
                 className="h-20 md:h-24 w-auto object-contain"
               />
             </div>
             <p className="text-muted-foreground text-sm leading-relaxed max-w-xs">
-              Your sanctuary for refined nail care and timeless elegance.
-              Experience quiet luxury.
+              A small studio for considered nail care and beauty — finished
+              with patience, polished to last.
             </p>
             <div className="flex gap-3 mt-6">
               {instagramHref && (
@@ -61,7 +61,9 @@ const Footer = () => {
                 </a>
               )}
               <a
-                href="#"
+                href="https://www.facebook.com/Estiquenailsandbeautyartistry"
+                target="_blank"
+                rel="noopener noreferrer"
                 aria-label="Facebook"
                 className="w-9 h-9 rounded-full bg-foreground/5 flex items-center justify-center hover:bg-primary/20 transition-colors duration-300"
               >
@@ -71,7 +73,7 @@ const Footer = () => {
           </div>
 
           {/* Quick Links */}
-          <div>
+          <div className="lg:col-span-1">
             <h4 className="font-semibold mb-5 text-xs uppercase tracking-[0.2em] text-foreground/70">
               Quick Links
             </h4>
@@ -90,7 +92,7 @@ const Footer = () => {
           </div>
 
           {/* Contact */}
-          <div>
+          <div className="lg:col-span-1">
             <h4 className="font-semibold mb-5 text-xs uppercase tracking-[0.2em] text-foreground/70">
               Contact
             </h4>
@@ -136,7 +138,7 @@ const Footer = () => {
           </div>
 
           {/* Hours */}
-          <div>
+          <div className="lg:col-span-1">
             <h4 className="font-semibold mb-5 text-xs uppercase tracking-[0.2em] text-foreground/70">
               Hours
             </h4>
@@ -166,6 +168,51 @@ const Footer = () => {
               )}
             </ul>
           </div>
+
+          {/* Map — next to Hours */}
+          <div className="lg:col-span-1 md:col-span-2">
+            <h4 className="font-semibold mb-5 text-xs uppercase tracking-[0.2em] text-foreground/70">
+              Find Us
+            </h4>
+            {primary?.map_embed_url ? (
+              <div className="rounded-lg overflow-hidden border border-border/40 shadow-sm shadow-foreground/5 aspect-[4/3]">
+                <iframe
+                  title="Estique location map"
+                  src={primary.map_embed_url}
+                  loading="lazy"
+                  referrerPolicy="no-referrer-when-downgrade"
+                  className="w-full h-full border-0 grayscale opacity-90 hover:grayscale-0 hover:opacity-100 transition-all duration-700"
+                  allowFullScreen
+                />
+              </div>
+            ) : (
+              /* Placeholder shown until map_embed_url is set in Supabase */
+              <a
+                href={GOOGLE_MAPS_URL}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex aspect-[4/3] items-center justify-center rounded-lg bg-accent/40 border border-border/40 group hover:bg-accent/60 transition-colors duration-300"
+              >
+                <div className="text-center px-4">
+                  <MapPin className="h-8 w-8 text-primary/40 mx-auto mb-2 group-hover:text-primary transition-colors duration-300" />
+                  <p className="text-sm font-semibold text-foreground/80 mb-1">ESTIQUE Nails & Beauty Artistry</p>
+                  {primary?.address && (
+                    <p className="text-xs text-muted-foreground">{primary.address}</p>
+                  )}
+                </div>
+              </a>
+            )}
+            <a
+              href={GOOGLE_MAPS_URL}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-1.5 mt-3 text-xs text-muted-foreground hover:text-primary transition-colors duration-300"
+            >
+              <ExternalLink className="h-3 w-3" />
+              Get Directions
+            </a>
+          </div>
+
         </div>
 
         <div className="border-t border-foreground/10 pt-8 text-center text-xs text-muted-foreground/60 tracking-wide">

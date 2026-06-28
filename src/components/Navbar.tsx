@@ -1,23 +1,16 @@
 import { useState } from "react";
 import { Menu, X } from "lucide-react";
-import { Button } from "@/components/ui/button";
 import { Link, useNavigate } from "react-router-dom";
 
-const leftLinks = [
-  "Home",
-  "About",
-  "Services",
-  "Gallery",
-  "Pricing",
-  "Location",
-];
+import { BookOnlineButton } from "@/components/BookingDialog";
+
+const leftLinks = ["Home", "About", "Services", "Gallery", "Studio"];
 const routeLinks: Record<string, string> = {
   Home: "/",
   About: "/about",
   Services: "/services",
   Gallery: "/gallery",
-  Pricing: "/pricing",
-  Location: "/location",
+  Studio: "/studio",
 };
 
 const Navbar = () => {
@@ -35,8 +28,8 @@ const Navbar = () => {
   };
 
   return (
-    <nav className="sticky top-0 z-50 bg-background/80 backdrop-blur-md border-b border-border/50">
-      <div className="container mx-auto flex items-center justify-between px-4 py-3">
+    <nav className="sticky top-0 z-50 bg-white/70 backdrop-blur-md border-b border-border/50">
+      <div className="container mx-auto relative flex items-center justify-between px-4 py-3">
         {/* Left nav links — desktop */}
         <ul className="hidden lg:flex items-center gap-8 flex-1">
           {leftLinks.map((l) => (
@@ -61,11 +54,15 @@ const Navbar = () => {
         </ul>
 
         {/* Center Logo */}
-        <Link to="/" className="flex items-center" aria-label="Estique">
+        <Link
+          to="/"
+          className="flex items-center mx-auto lg:mx-0 lg:absolute lg:left-1/2 lg:-translate-x-1/2"
+          aria-label="Estique"
+        >
           <img
-            src="https://res.cloudinary.com/dzzoimn4v/image/upload/v1778645820/estique_logo_transparent_kwyboz.png"
+            src="https://res.cloudinary.com/dzzoimn4v/image/upload/e_colorize:100,co_rgb:CCB68D/v1778645820/estique_logo_transparent_kwyboz.png"
             alt="Estique"
-            className="h-14 md:h-16 w-auto object-contain"
+            className="h-16 md:h-20 w-auto object-contain"
           />
         </Link>
 
@@ -77,18 +74,15 @@ const Navbar = () => {
           >
             Contact
           </button>
-          <Button
-            onClick={() => navigate("/booking")}
-            className="btn-shimmer rounded-lg bg-primary text-primary-foreground text-xs tracking-wider px-6 py-2 hover:bg-primary/85 transition-all duration-500"
-          >
-            Book Online
-          </Button>
+          <BookOnlineButton />
+
         </div>
 
         {/* Mobile toggle */}
         <button
-          className="lg:hidden text-foreground"
+          className="lg:hidden text-foreground absolute right-4 top-1/2 -translate-y-1/2"
           onClick={() => setOpen(!open)}
+          aria-label="Toggle menu"
         >
           {open ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
         </button>
@@ -96,7 +90,7 @@ const Navbar = () => {
 
       {/* Mobile menu */}
       {open && (
-        <div className="lg:hidden border-t border-border/50 bg-background/95 backdrop-blur-md px-4 pb-6">
+        <div className="lg:hidden border-t border-border/50 bg-white/90 backdrop-blur-md px-4 pb-6">
           <ul className="flex flex-col gap-1 pt-4">
             {[...leftLinks, "Contact"].map((l) => (
               <li key={l}>
@@ -118,16 +112,8 @@ const Navbar = () => {
                 )}
               </li>
             ))}
-            <li className="pt-2">
-              <Button
-                onClick={() => {
-                  setOpen(false);
-                  navigate("/booking");
-                }}
-                className="btn-shimmer rounded-lg bg-primary text-primary-foreground w-full tracking-wider"
-              >
-                Book Online
-              </Button>
+            <li className="pt-2" onClick={() => setOpen(false)}>
+              <BookOnlineButton fullWidth />
             </li>
           </ul>
         </div>

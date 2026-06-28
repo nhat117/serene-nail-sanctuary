@@ -12,10 +12,11 @@ import {
 } from "lucide-react";
 import { useScrollReveal } from "@/hooks/useScrollReveal";
 import { useBranches, type BranchRow } from "@/hooks/useBranches";
+import { BookOnlineButton } from "@/components/BookingDialog";
 import TopBar from "@/components/TopBar";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
-import salonImage from "@/assets/salon-interior.jpg";
+import salonImage from "@/assets/gallery/about-detail.jpg";
 
 const LocationPage = () => {
   const heroRef = useScrollReveal<HTMLElement>();
@@ -58,8 +59,8 @@ const LocationPage = () => {
           </h1>
 
           <p className="text-muted-foreground max-w-xl mx-auto text-base md:text-lg leading-relaxed scroll-reveal scroll-reveal-delay-2">
-            Step into a sanctuary of refined beauty. Find the Estique studio
-            nearest to you and book your visit.
+            Find the Estique studio nearest to you, and the trading hours that
+            suit your week.
           </p>
         </div>
       </section>
@@ -119,7 +120,7 @@ const LocationPage = () => {
           <Link to="/">
             <Button
               variant="outline"
-              className="rounded-none border-foreground/30 text-foreground px-8 py-5 text-sm tracking-[0.1em] font-medium hover:bg-foreground hover:text-background transition-all duration-500"
+              className="rounded-lg border-foreground/30 text-foreground px-10 py-6 text-base tracking-[0.1em] font-medium hover:bg-foreground hover:text-background transition-all duration-500"
             >
               <ArrowLeft className="h-3.5 w-3.5 mr-2" />
               Back to Home
@@ -250,12 +251,10 @@ const BranchDetails = ({ branch }: { branch: BranchRow }) => {
         )}
 
         <div className="flex flex-col sm:flex-row gap-4 pt-2">
-          <Link to="/booking">
-            <Button className="btn-shimmer rounded-lg bg-primary text-primary-foreground text-xs tracking-wider px-6 py-5 hover:bg-primary/85 transition-all duration-500">
-              Book at {branchShortName}
-              <ArrowRight className="h-3.5 w-3.5 ml-2" />
-            </Button>
-          </Link>
+          <BookOnlineButton className="px-6 py-5">
+            Book at {branchShortName}
+            <ArrowRight className="h-3.5 w-3.5 ml-2" />
+          </BookOnlineButton>
           {directionsHref && (
             <a
               href={directionsHref}
@@ -264,7 +263,7 @@ const BranchDetails = ({ branch }: { branch: BranchRow }) => {
             >
               <Button
                 variant="outline"
-                className="rounded-lg border-foreground/20 text-foreground text-xs tracking-wider px-6 py-5 hover:bg-foreground hover:text-background transition-all duration-500"
+                className="rounded-lg border-foreground/20 text-foreground text-sm tracking-wider px-8 py-6 hover:bg-foreground hover:text-background transition-all duration-500"
               >
                 Get Directions
               </Button>

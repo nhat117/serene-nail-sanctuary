@@ -22,6 +22,7 @@ export default {
         primary: {
           DEFAULT: "hsl(var(--primary))",
           foreground: "hsl(var(--primary-foreground))",
+          hover: "hsl(var(--primary-hover))",
         },
         secondary: {
           DEFAULT: "hsl(var(--secondary))",
@@ -62,6 +63,11 @@ export default {
         lg: "var(--radius)",
         md: "calc(var(--radius) - 2px)",
         sm: "calc(var(--radius) - 4px)",
+      },
+      boxShadow: {
+        soft: "0 4px 24px -8px hsl(30 6% 22% / 0.08)",
+        "soft-lg": "0 12px 40px -12px hsl(30 6% 22% / 0.12)",
+        champagne: "0 8px 28px -10px hsl(35 38% 68% / 0.35)",
       },
       keyframes: {
         "accordion-down": {
