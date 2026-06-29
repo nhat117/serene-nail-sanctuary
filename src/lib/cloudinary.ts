@@ -41,7 +41,7 @@ export function cld(publicId: string, opts: Options = {}): string {
   return `https://res.cloudinary.com/${CLOUD_NAME}/image/upload/${parts.join(",")}/${publicId}`;
 }
 
-/** The Estique logo, recoloured to the champagne primary on the fly. */
+/** The Estique logo, recoloured to the brass primary on the fly. */
 export const ESTIQUE_LOGO_URL = cld("v1778645820/estique_logo_transparent_kwyboz.png", {
-  raw: "e_colorize:100,co_rgb:CCB68D",
+  raw: "e_colorize:100,co_rgb:B08D57",
 });
