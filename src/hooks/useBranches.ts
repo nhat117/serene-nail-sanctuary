@@ -46,6 +46,8 @@ export function useBranches() {
       const branches = (data ?? []) as unknown as BranchRow[];
       for (const b of branches) {
         b.branch_trading_hours.sort((a, c) => a.sort_order - c.sort_order);
+        // Pending Supabase update: force the live Estique handle.
+        b.instagram = "@estique_kirrawee";
       }
       return branches;
     },
