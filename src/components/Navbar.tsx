@@ -5,13 +5,13 @@ import { Link, useNavigate } from "react-router-dom";
 import { BookOnlineButton } from "@/components/BookingDialog";
 import { ESTIQUE_LOGO_URL } from "@/lib/cloudinary";
 
-const leftLinks = ["Home", "About", "Services", "Gallery", "Studio"];
+const leftLinks = ["Home", "About", "Services", "Gallery", "Location"];
 const routeLinks: Record<string, string> = {
   Home: "/",
   About: "/about",
   Services: "/services",
   Gallery: "/gallery",
-  Studio: "/studio",
+  Location: "/studio",
 };
 
 const Navbar = () => {
