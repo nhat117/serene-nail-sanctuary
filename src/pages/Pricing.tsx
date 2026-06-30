@@ -21,7 +21,8 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { cld } from "@/lib/cloudinary";
 
-const pricingHero = cld("estique/gallery/service-signature", { width: 1920 });
+const pricingHero =
+  "https://images.unsplash.com/photo-1604654894610-df63bc536371?auto=format&fit=crop&w=1920&q=80";
 
 const NOTE_ICONS: Record<string, typeof Wallet> = {
   Wallet,
@@ -54,11 +55,7 @@ const PricingPage = () => {
           aria-hidden="true"
         />
         <div
-          className="absolute inset-0"
-          style={{
-            background:
-              "linear-gradient(180deg, hsl(var(--warm-ivory) / 0.78) 0%, hsl(var(--warm-ivory) / 0.92) 70%, hsl(var(--warm-ivory)) 100%)",
-          }}
+          className="absolute inset-0 bg-black/50"
           aria-hidden="true"
         />
         <div className="relative container mx-auto px-4">
@@ -70,11 +67,11 @@ const PricingPage = () => {
             <div className="h-px w-16 bg-primary/40" />
           </div>
 
-          <h1 className="text-4xl md:text-5xl lg:text-6xl font-semibold mb-6 scroll-reveal scroll-reveal-delay-1">
+          <h1 className="text-4xl md:text-5xl lg:text-6xl font-semibold mb-6 text-white scroll-reveal scroll-reveal-delay-1">
             Services & Pricing
           </h1>
 
-          <p className="text-foreground/70 max-w-xl mx-auto text-base md:text-lg leading-relaxed scroll-reveal scroll-reveal-delay-2">
+          <p className="text-white max-w-xl mx-auto text-base md:text-lg leading-relaxed scroll-reveal scroll-reveal-delay-2">
             Our full menu of nail and waxing services, with clear, honest
             pricing. All prices are in AUD.
           </p>
