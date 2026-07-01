@@ -64,7 +64,7 @@ const AboutPage = () => {
           </div>
 
           <h1 className="text-4xl md:text-5xl lg:text-6xl font-semibold mb-6 scroll-reveal scroll-reveal-delay-1">
-            About Estique
+            About ESTIQUE
           </h1>
 
           <p className="text-muted-foreground max-w-xl mx-auto text-base md:text-lg leading-relaxed scroll-reveal scroll-reveal-delay-2">
@@ -98,7 +98,7 @@ const AboutPage = () => {
             </h2>
 
             <p className="text-muted-foreground leading-relaxed mb-5 text-base md:text-lg scroll-reveal scroll-reveal-delay-3">
-              Estique was started by people who care, perhaps too much, about
+              ESTIQUE was started by people who care, perhaps too much, about
               how a manicure should feel. We wanted a room where the work could
               be done unhurried, with proper time given to every set of hands.
             </p>
@@ -218,7 +218,7 @@ const AboutPage = () => {
               {primary?.map_embed_url ? (
                 <div className="aspect-[4/3] overflow-hidden rounded-lg shadow-md shadow-foreground/5 bg-foreground/5">
                   <iframe
-                    title="Estique Nails & Beauty Artistry location"
+                    title="ESTIQUE Nails & Beauty Artistry location"
                     src={primary.map_embed_url}
                     loading="lazy"
                     referrerPolicy="no-referrer-when-downgrade"
@@ -248,7 +248,7 @@ const AboutPage = () => {
             {/* Address card */}
             <div className="flex flex-col justify-center scroll-reveal scroll-reveal-delay-2">
               <h3 className="text-xl md:text-2xl font-semibold mb-2 leading-snug">
-                Estique Nails
+                ESTIQUE Nails
                 <br />
                 <span className="italic font-medium text-muted-foreground">
                   & Beauty Artistry

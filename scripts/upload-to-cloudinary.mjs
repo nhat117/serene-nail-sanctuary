@@ -19,8 +19,11 @@ import { createHash } from "node:crypto";
 import { readFileSync, readdirSync } from "node:fs";
 import { basename, extname, resolve } from "node:path";
 
-const GALLERY_DIR = resolve(process.cwd(), "src/assets/gallery");
-const REMOTE_FOLDER = "estique/gallery";
+const GALLERY_DIR = resolve(
+  process.cwd(),
+  process.env.GALLERY_DIR || "src/assets/gallery",
+);
+const REMOTE_FOLDER = process.env.CLOUDINARY_FOLDER || "estique/gallery";
 
 function parseCreds() {
   const url = process.env.CLOUDINARY_URL;
@@ -95,9 +98,11 @@ async function main() {
   }
   console.log(`Uploading ${files.length} files to ${creds.cloudName}/${REMOTE_FOLDER}\n`);
 
+  const prefix = process.env.PUBLIC_ID_PREFIX || "";
   const mapping = {};
   for (const f of files) {
-    const publicId = basename(f, extname(f));
+    const raw = basename(f, extname(f)).toLowerCase().replace(/[^a-z0-9-]+/g, "-");
+    const publicId = prefix ? `${prefix}-${raw}` : raw;
     process.stdout.write(`→ ${f} ... `);
     try {
       const json = await uploadOne({

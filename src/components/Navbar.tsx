@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Menu, X } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 
@@ -16,7 +16,30 @@ const routeLinks: Record<string, string> = {
 
 const Navbar = () => {
   const [open, setOpen] = useState(false);
+  const [hidden, setHidden] = useState(false);
+  const lastYRef = useRef(0);
   const navigate = useNavigate();
+
+  useEffect(() => {
+    const onScroll = () => {
+      const y = window.scrollY;
+      const last = lastYRef.current;
+      const delta = y - last;
+      if (Math.abs(delta) < 6) return;
+      if (delta > 0 && y > 80) {
+        setHidden(true);
+      } else if (delta < 0) {
+        setHidden(false);
+      }
+      lastYRef.current = y;
+    };
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+
+  useEffect(() => {
+    if (open) setHidden(false);
+  }, [open]);
 
   const scrollTo = (id: string) => {
     setOpen(false);
@@ -29,23 +52,27 @@ const Navbar = () => {
   };
 
   return (
-    <nav className="sticky top-0 z-50 bg-white/70 backdrop-blur-md border-b border-border/50">
-      <div className="container mx-auto relative flex items-center justify-between px-4 py-3">
+    <nav
+      className={`sticky top-0 z-50 bg-white/70 backdrop-blur-md border-b border-border/50 transition-transform duration-300 ease-out will-change-transform ${
+        hidden ? "-translate-y-full" : "translate-y-0"
+      }`}
+    >
+      <div className="container mx-auto relative flex items-center justify-between px-6 py-1 min-h-[5rem] md:min-h-[6rem] lg:min-h-[7rem]">
         {/* Left nav links — desktop */}
-        <ul className="hidden lg:flex items-center gap-8 flex-1">
+        <ul className="hidden lg:flex items-center gap-10 flex-1">
           {leftLinks.map((l) => (
             <li key={l}>
               {routeLinks[l] ? (
                 <Link
                   to={routeLinks[l]}
-                  className="text-sm font-medium tracking-wider text-foreground/70 hover:text-primary transition-colors duration-300"
+                  className="text-lg font-medium tracking-wider text-foreground/70 hover:text-primary transition-colors duration-300"
                 >
                   {l}
                 </Link>
               ) : (
                 <button
                   onClick={() => scrollTo(l.toLowerCase())}
-                  className="text-sm font-medium tracking-wider text-foreground/70 hover:text-primary transition-colors duration-300"
+                  className="text-lg font-medium tracking-wider text-foreground/70 hover:text-primary transition-colors duration-300"
                 >
                   {l}
                 </button>
@@ -57,25 +84,25 @@ const Navbar = () => {
         {/* Center Logo */}
         <Link
           to="/"
-          className="flex items-center mx-auto lg:mx-0 lg:absolute lg:left-1/2 lg:-translate-x-1/2"
-          aria-label="Estique"
+          className="flex items-center mx-auto lg:mx-0 lg:absolute lg:left-1/2 lg:-translate-x-1/2 px-8 py-1 md:py-1.5"
+          aria-label="ESTIQUE"
         >
           <img
             src={ESTIQUE_LOGO_URL}
-            alt="Estique"
-            className="h-16 md:h-20 w-auto object-contain"
+            alt="ESTIQUE"
+            className="h-16 md:h-20 lg:h-24 w-auto object-contain"
           />
         </Link>
 
         {/* Right nav links + CTA — desktop */}
-        <div className="hidden lg:flex items-center gap-8 flex-1 justify-end">
+        <div className="hidden lg:flex items-center gap-10 flex-1 justify-end">
           <button
             onClick={() => scrollTo("contact")}
-            className="text-sm font-medium tracking-wider text-foreground/70 hover:text-primary transition-colors duration-300"
+            className="text-lg font-medium tracking-wider text-foreground/70 hover:text-primary transition-colors duration-300"
           >
             Contact
           </button>
-          <BookOnlineButton />
+          <BookOnlineButton className="h-auto text-base px-9 py-5" />
 
         </div>
 

@@ -29,7 +29,7 @@ const gGold = g("gallery-gold");
 const heroNails = g("hero-nails");
 const heroSecondary = g("hero-secondary");
 
-// All pools use Estique's own nail-art photos.
+// All pools use ESTIQUE's own nail-art photos.
 const NAIL_ART_PHOTOS = [gStars, gCosmic, gVangogh, serviceBridal];
 const MANICURE_PHOTOS = [serviceManicure, gFrench, gPolka, gStripes];
 const GEL_EXTENSION_PHOTOS = [serviceGel, gGreen, gGold, heroNails];

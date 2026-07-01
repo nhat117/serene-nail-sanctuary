@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import { X, ArrowLeft, ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -8,35 +8,18 @@ import TopBar from "@/components/TopBar";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { cld } from "@/lib/cloudinary";
+import { driveNailIds, driveSalonIds } from "@/data/gallery-imports";
 
-// CDN URL for one gallery image. Width 1200 covers the largest column on
-// 4-up desktop layouts; Cloudinary auto-serves AVIF/WebP via f_auto.
-const g = (name: string) => cld(`estique/gallery/${name}`, { width: 1200 });
+// The curated hand-picked images that used to live under estique/gallery/
+// (hero-nails, service-*, gallery-*, studio-*) were deleted from Cloudinary
+// during the drive-import cleanup. The Gallery now renders only the Drive
+// imports until we re-upload curated shots.
 
-const heroNails = g("hero-nails");
-const signature = g("service-signature");
-const manicure = g("service-manicure");
-const gel = g("service-gel");
-const bridal = g("service-bridal");
-const art = g("service-art");
-const stars = g("gallery-stars");
-const stripes = g("gallery-stripes");
-const polka = g("gallery-polka");
-const cosmic = g("gallery-cosmic");
-const vangogh = g("gallery-vangogh");
-const french = g("gallery-french");
-const green = g("gallery-green");
-const gold = g("gallery-gold");
-const studioSign = g("studio-sign");
-const studioLogoWall = g("studio-logo-wall");
-const studioBowSign = g("studio-bow-sign");
-const studioPolishWall = g("studio-polish-wall");
-const studioShelves = g("studio-shelves");
-const studioPedicure = g("studio-pedicure");
-const studioSpa = g("studio-spa");
-const studioDetail = g("studio-detail");
-const studioWorkstation = g("studio-workstation");
-const studioHandpaint = g("studio-handpaint");
+// Drive import — synced by scripts/sync-gallery-from-drive.mjs. Dedupe is
+// done at mount time in GalleryPage by HEAD-fetching each URL and comparing
+// Cloudinary's ETag (which is the source file's MD5). No hashes stored here.
+const driveImport = (name: string) =>
+  cld(`estique/gallery/drive-import/${name}`, { width: 1200 });
 
 // Four clean categories grouped by feel rather than technique:
 //   Signature — showpiece work, gold + jewelry, the "wow" set
@@ -47,54 +30,110 @@ type Category = "Signature" | "Classic" | "Statement" | "Studio";
 
 type GalleryItem = { src: string; alt: string; category: Category };
 
-const galleryImages: GalleryItem[] = [
-  // Signature — gold detail, layered jewelry, the headline work
-  { src: heroNails, alt: "Gold-accented signature nail set", category: "Signature" },
-  { src: gold, alt: "Stacked gold detail with soft French tips", category: "Signature" },
-  { src: signature, alt: "Mixed-finish signature set with crystal accents", category: "Signature" },
-  { src: bridal, alt: "Bridal-style nails with 3D floral detail", category: "Signature" },
+const rawGalleryImages: GalleryItem[] = [
+  // Nail work synced from Drive — deduped at mount time by ETag.
+  ...driveNailIds.map((id) => ({
+    src: driveImport(id),
+    alt: "ESTIQUE nail work",
+    category: "Signature" as const,
+  })),
 
-  // Classic — French tips and clean lines
-  { src: manicure, alt: "Classic French manicure", category: "Classic" },
-  { src: french, alt: "Soft French tips with subtle accents", category: "Classic" },
-  { src: polka, alt: "French tips with playful polka detail", category: "Classic" },
-  { src: gel, alt: "Delicate floral gel design", category: "Classic" },
-
-  // Statement — hand-painted and themed
-  { src: art, alt: "Plum and silver hand-painted artistry", category: "Statement" },
-  { src: stars, alt: "Burgundy and cream stars with polka dots", category: "Statement" },
-  { src: stripes, alt: "Pastel stripes and stars on almond nails", category: "Statement" },
-  { src: cosmic, alt: "Cosmic-themed nail art", category: "Statement" },
-  { src: vangogh, alt: "Starry-night hand-painted nails", category: "Statement" },
-  { src: green, alt: "Sheer nails with green floral inlay", category: "Statement" },
-
-  // Studio — the Estique space, signage, and team at work
-  { src: studioSign, alt: "Estique storefront with brick wall logo and bow sign", category: "Studio" },
-  { src: studioLogoWall, alt: "Estique wall logo in polished brass on white brick", category: "Studio" },
-  { src: studioBowSign, alt: "The Estique bow emblem on the outdoor sign", category: "Studio" },
-  { src: studioPolishWall, alt: "Floor-to-ceiling polish wall inside the studio", category: "Studio" },
-  { src: studioShelves, alt: "Soft pink polish shelves with greenery", category: "Studio" },
-  { src: studioPedicure, alt: "Pedicure chairs lined up in the spa area", category: "Studio" },
-  { src: studioSpa, alt: "Pedicure stations and basins ready for the day", category: "Studio" },
-  { src: studioWorkstation, alt: "Manicure stations with task lamps and supplies", category: "Studio" },
-  { src: studioDetail, alt: "Close-up of a manicurist refining nail shape", category: "Studio" },
-  { src: studioHandpaint, alt: "Hand-painting a nail in progress with fine brushwork", category: "Studio" },
+  // Salon interior synced from Drive
+  ...driveSalonIds.map((id) => ({
+    src: driveImport(id),
+    alt: "Inside the ESTIQUE studio",
+    category: "Studio" as const,
+  })),
 ];
+
+// Runtime dedupe by Cloudinary ETag. Every response Cloudinary serves has an
+// ETag header that equals the MD5 of the underlying source file, so a HEAD
+// request per image is enough to identify exact-byte duplicates without
+// downloading the bytes twice. First-seen wins, so the curated order is
+// preserved. HEAD fetches run concurrently (with a small cap) and the whole
+// list is available in one setState.
+const useDedupedGallery = (raw: GalleryItem[]) => {
+  const [images, setImages] = useState<GalleryItem[]>(raw);
+
+  useEffect(() => {
+    let cancelled = false;
+
+    const run = async () => {
+      const etags = new Array<string | null>(raw.length);
+      let cursor = 0;
+      const CONCURRENCY = 8;
+      const worker = async () => {
+        while (true) {
+          const i = cursor++;
+          if (i >= raw.length) return;
+          try {
+            const res = await fetch(raw[i].src, { method: "HEAD" });
+            // Strip weak-etag prefix + surrounding quotes
+            const raw_etag = res.headers.get("etag");
+            etags[i] = raw_etag ? raw_etag.replace(/^W\//, "").replace(/^"|"$/g, "") : null;
+          } catch {
+            etags[i] = null;
+          }
+        }
+      };
+      await Promise.all(Array.from({ length: CONCURRENCY }, worker));
+      if (cancelled) return;
+
+      const seen = new Set<string>();
+      const out: GalleryItem[] = [];
+      for (let i = 0; i < raw.length; i++) {
+        const key = etags[i];
+        if (key) {
+          if (seen.has(key)) continue;
+          seen.add(key);
+        }
+        out.push(raw[i]);
+      }
+      setImages(out);
+    };
+
+    void run();
+    return () => {
+      cancelled = true;
+    };
+  }, [raw]);
+
+  return images;
+};
 
 const categories = [
   "All",
-  ...Array.from(new Set(galleryImages.map((img) => img.category))),
+  ...Array.from(new Set(rawGalleryImages.map((img) => img.category))),
 ];
 
 const GalleryPage = () => {
   const heroRef = useScrollReveal<HTMLElement>();
   const [activeCategory, setActiveCategory] = useState("All");
   const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
+  const galleryImages = useDedupedGallery(rawGalleryImages);
 
-  const filteredImages =
-    activeCategory === "All"
-      ? galleryImages
-      : galleryImages.filter((img) => img.category === activeCategory);
+  // Broken-image tracking: any <img> that fires onError adds its src here,
+  // then the next render filters it out of filteredImages.
+  const [brokenSrcs, setBrokenSrcs] = useState<Set<string>>(() => new Set());
+  const markBroken = (src: string) => {
+    setBrokenSrcs((prev) => {
+      if (prev.has(src)) return prev;
+      const next = new Set(prev);
+      next.add(src);
+      return next;
+    });
+  };
+
+  const filteredImages = useMemo(
+    () => {
+      const base =
+        activeCategory === "All"
+          ? galleryImages
+          : galleryImages.filter((img) => img.category === activeCategory);
+      return base.filter((img) => !brokenSrcs.has(img.src));
+    },
+    [galleryImages, activeCategory, brokenSrcs],
+  );
 
   const openLightbox = (index: number) => setLightboxIndex(index);
   const closeLightbox = () => setLightboxIndex(null);
@@ -133,7 +172,7 @@ const GalleryPage = () => {
 
           <p className="text-muted-foreground max-w-xl mx-auto text-base md:text-lg leading-relaxed mb-12 scroll-reveal scroll-reveal-delay-2">
             A small selection of recent work — from clean French tips to
-            hand-painted detail, all done by the team at Estique.
+            hand-painted detail, all done by the team at ESTIQUE.
           </p>
 
           {/* Category filters */}
@@ -169,6 +208,7 @@ const GalleryPage = () => {
                   src={image.src}
                   alt={image.alt}
                   loading="lazy"
+                  onError={() => markBroken(image.src)}
                   className="w-full h-auto object-cover transition-transform duration-700 group-hover:scale-105"
                 />
 

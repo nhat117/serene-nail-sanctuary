@@ -7,6 +7,7 @@ import {
   Phone,
   Clock,
   Instagram,
+  Facebook,
   ArrowRight,
   ArrowLeft,
 } from "lucide-react";
@@ -61,7 +62,7 @@ const LocationPage = () => {
           </h1>
 
           <p className="text-muted-foreground max-w-xl mx-auto text-base md:text-lg leading-relaxed scroll-reveal scroll-reveal-delay-2">
-            Find the Estique studio nearest to you, and the trading hours that
+            Find the ESTIQUE studio nearest to you, and the trading hours that
             suit your week.
           </p>
         </div>
@@ -240,7 +241,7 @@ const BranchDetails = ({ branch }: { branch: BranchRow }) => {
         </div>
 
         {branch.instagram && (
-          <DetailRow icon={Instagram} label="Follow Us">
+          <DetailRow icon={Instagram} label="Instagram">
             <a
               href={`https://instagram.com/${branch.instagram.replace("@", "")}`}
               target="_blank"
@@ -251,6 +252,17 @@ const BranchDetails = ({ branch }: { branch: BranchRow }) => {
             </a>
           </DetailRow>
         )}
+
+        <DetailRow icon={Facebook} label="Facebook">
+          <a
+            href="https://www.facebook.com/Estiquenailsandbeautyartistry"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-foreground/90 text-base hover:text-primary transition-colors duration-300"
+          >
+            ESTIQUE Nails & Beauty Artistry
+          </a>
+        </DetailRow>
 
         <div className="flex flex-col sm:flex-row gap-4 pt-2">
           <BookOnlineButton className="px-6 py-5">

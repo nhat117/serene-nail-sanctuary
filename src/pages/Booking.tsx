@@ -481,7 +481,7 @@ const Booking = ({ compact = false, onComplete }: BookingProps = {}) => {
       const emailHtml = `
         <div style="font-family: 'Manrope', Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 24px;">
           <h1 style="color: #1a1a1a; font-size: 24px; font-family: 'Noto Serif', serif; font-weight: 400;">Your booking is confirmed</h1>
-          <p style="color: #555; font-size: 14px; line-height: 1.7;">Hi <strong>${esc(customerName.trim())}</strong>, thank you for booking with Estique.</p>
+          <p style="color: #555; font-size: 14px; line-height: 1.7;">Hi <strong>${esc(customerName.trim())}</strong>, thank you for booking with ESTIQUE.</p>
           <div style="background: #faf7f4; border: 1px solid #eadfd4; border-radius: 2px; padding: 20px; margin: 24px 0;">
             <p style="margin: 6px 0;"><strong>Service:</strong> ${esc(currentService.name)}</p>
             <p style="margin: 6px 0;"><strong>Date:</strong> ${format(selectedDate, "dd MMM yyyy")}</p>

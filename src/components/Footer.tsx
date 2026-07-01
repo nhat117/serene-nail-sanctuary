@@ -1,6 +1,7 @@
 import {
   MapPin,
   Phone,
+  Mail,
   Instagram,
   Facebook,
   ExternalLink,
@@ -11,6 +12,7 @@ import { useBranches } from "@/hooks/useBranches";
 import { ESTIQUE_LOGO_URL } from "@/lib/cloudinary";
 
 const GOOGLE_MAPS_URL = "https://maps.app.goo.gl/xa2tcA4pd8TCwZA57";
+const CONTACT_EMAIL = "estiquenails.info@gmail.com";
 
 const quickLinks = [
   { label: "Home", to: "/" },
@@ -41,7 +43,7 @@ const Footer = () => {
             <div className="mb-5">
               <img
                 src={ESTIQUE_LOGO_URL}
-                alt="Estique"
+                alt="ESTIQUE"
                 className="h-20 md:h-24 w-auto object-contain"
               />
             </div>
@@ -122,6 +124,15 @@ const Footer = () => {
                   </a>
                 </li>
               )}
+              <li className="flex items-center gap-2">
+                <Mail className="h-4 w-4 text-primary shrink-0" />
+                <a
+                  href={`mailto:${CONTACT_EMAIL}`}
+                  className="hover:text-primary transition-colors break-all"
+                >
+                  {CONTACT_EMAIL}
+                </a>
+              </li>
               {instagramHref && (
                 <li className="flex items-center gap-2">
                   <Instagram className="h-4 w-4 text-primary shrink-0" />
@@ -178,7 +189,7 @@ const Footer = () => {
             {primary?.map_embed_url ? (
               <div className="rounded-lg overflow-hidden border border-border/40 shadow-sm shadow-foreground/5 aspect-[4/3]">
                 <iframe
-                  title="Estique location map"
+                  title="ESTIQUE location map"
                   src={primary.map_embed_url}
                   loading="lazy"
                   referrerPolicy="no-referrer-when-downgrade"
@@ -217,7 +228,7 @@ const Footer = () => {
         </div>
 
         <div className="border-t border-foreground/10 pt-8 text-center text-xs text-muted-foreground/60 tracking-wide">
-          © {new Date().getFullYear()} Estique. All rights reserved.
+          © {new Date().getFullYear()} ESTIQUE. All rights reserved.
         </div>
       </div>
     </footer>

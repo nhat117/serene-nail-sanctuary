@@ -15,7 +15,7 @@ const AboutSection = () => {
       <div className="flex items-center justify-center gap-6 mb-14 scroll-reveal">
         <div className="h-px w-16 bg-primary/40 line-expand" />
         <p className="uppercase tracking-[0.3em] text-primary text-xs font-semibold">
-          About Estique
+          About ESTIQUE
         </p>
         <div className="h-px w-16 bg-primary/40 line-expand" />
       </div>
@@ -44,11 +44,11 @@ const AboutSection = () => {
         {/* Content — slides in from right */}
         <div className="lg:pl-4 scroll-reveal-right scroll-reveal-delay-2">
           <h2 className="text-3xl md:text-4xl lg:text-5xl font-semibold mb-8 leading-tight">
-            The Estique<br />
+            The ESTIQUE<br />
             <span className="italic font-medium text-foreground/80">signature</span>
           </h2>
           <p className="text-muted-foreground leading-relaxed mb-10 text-base md:text-lg">
-            Every set we finish carries the Estique touch — delicate gold
+            Every set we finish carries the ESTIQUE touch — delicate gold
             detail, soft tones, and lines drawn by hand. Our artists take the
             time each set deserves, so the result is something you'll be quiet
             about, but never stop noticing.

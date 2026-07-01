@@ -33,7 +33,7 @@ const HeroSection = () => {
           Welcome to
         </p>
         <h1 className="text-5xl md:text-7xl lg:text-8xl xl:text-9xl font-semibold leading-[1.08] mb-8 text-white animate-fade-up">
-          Estique
+          ESTIQUE
         </h1>
 
         <p className="text-white/80 max-w-xl mb-10 text-lg md:text-xl lg:text-2xl leading-relaxed animate-fade-up-delay">
