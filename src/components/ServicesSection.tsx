@@ -4,11 +4,11 @@ import StarField from "@/components/StarField";
 import { useScrollReveal } from "@/hooks/useScrollReveal";
 import { cld } from "@/lib/cloudinary";
 
-const g = (name: string) => cld(`estique/gallery/${name}`, { width: 800 });
-const serviceManicure = g("service-manicure");
-const serviceGel = g("service-gel");
-const servicePedicure = g("service-art");
-const serviceBridal = g("service-bridal");
+const g = (name: string) => cld(`estique/gallery/drive-import/${name}`, { width: 800 });
+const serviceManicure = g("salon-img-8514");
+const serviceGel = g("nail-e4b4eec409c07d14ce78832158bb8a5b");
+const servicePedicure = g("nail-img-8443");
+const serviceBridal = g("nail-img-5650");
 
 const services = [
   { image: serviceManicure, alt: "Classic French manicure" },

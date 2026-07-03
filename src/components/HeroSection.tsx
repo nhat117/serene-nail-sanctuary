@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import StarField from "@/components/StarField";
 import { cld } from "@/lib/cloudinary";
 
-const heroImage = cld("estique/gallery/hero-stock", { width: 1920 });
+const heroImage = cld("estique/gallery/drive-import/salon-b8998b7007a2f2a063a76793c68263e0", { width: 1920 });
 
 const HeroSection = () => {
   const navigate = useNavigate();

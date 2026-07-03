@@ -12,22 +12,22 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { cld } from "@/lib/cloudinary";
 
-const g = (name: string) => cld(`estique/gallery/${name}`, { width: 800 });
-const serviceManicure = g("service-manicure");
-const serviceGel = g("service-gel");
-const servicePedicure = g("service-art");
-const serviceBridal = g("service-bridal");
-const salonInterior = g("about-detail");
-const gFrench = g("gallery-french");
-const gPolka = g("gallery-polka");
-const gStripes = g("gallery-stripes");
-const gStars = g("gallery-stars");
-const gCosmic = g("gallery-cosmic");
-const gVangogh = g("gallery-vangogh");
-const gGreen = g("gallery-green");
-const gGold = g("gallery-gold");
-const heroNails = g("hero-nails");
-const heroSecondary = g("hero-secondary");
+const g = (name: string) => cld(`estique/gallery/drive-import/${name}`, { width: 800 });
+const serviceManicure = g("salon-img-8514");
+const serviceGel = g("nail-e4b4eec409c07d14ce78832158bb8a5b");
+const servicePedicure = g("nail-img-8443");
+const serviceBridal = g("nail-img-5650");
+const salonInterior = g("salon-img-8428");
+const gFrench = g("nail-img-8464");
+const gPolka = g("nail-img-8445");
+const gStripes = g("nail-img-8446");
+const gStars = g("nail-img-8447");
+const gCosmic = g("nail-img-8454");
+const gVangogh = g("nail-img-8461");
+const gGreen = g("nail-img-8480");
+const gGold = g("nail-img-5651");
+const heroNails = g("salon-197c69f3212ba838e6219ef999506d90");
+const heroSecondary = g("salon-img-8440");
 
 // All pools use ESTIQUE's own nail-art photos.
 const NAIL_ART_PHOTOS = [gStars, gCosmic, gVangogh, serviceBridal];

@@ -19,7 +19,7 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { cld } from "@/lib/cloudinary";
 
-const salonImage = cld("estique/gallery/about-detail", { width: 1200 });
+const salonImage = cld("estique/gallery/drive-import/salon-img-8428", { width: 1200 });
 
 const LocationPage = () => {
   const heroRef = useScrollReveal<HTMLElement>();

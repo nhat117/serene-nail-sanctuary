@@ -3,7 +3,7 @@ import StarField from "@/components/StarField";
 import { useScrollReveal } from "@/hooks/useScrollReveal";
 import { cld } from "@/lib/cloudinary";
 
-const salonImage = cld("estique/gallery/craftsmanship", { width: 1200 });
+const salonImage = cld("estique/gallery/drive-import/salon-img-8428", { width: 1200 });
 
 const AboutSection = () => {
   const sectionRef = useScrollReveal<HTMLElement>();

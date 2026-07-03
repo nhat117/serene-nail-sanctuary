@@ -9,8 +9,8 @@ import Footer from "@/components/Footer";
 import { useBranches } from "@/hooks/useBranches";
 import { cld } from "@/lib/cloudinary";
 
-const salonImage = cld("estique/gallery/about-detail", { width: 1200 });
-const heroImage = cld("estique/gallery/hero-secondary", { width: 1200 });
+const salonImage = cld("estique/gallery/drive-import/salon-img-8428", { width: 1200 });
+const heroImage = cld("estique/gallery/drive-import/salon-img-8440", { width: 1200 });
 
 const values = [
   {
