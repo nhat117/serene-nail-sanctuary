@@ -97,8 +97,9 @@ const Booking = ({ compact = false, onComplete }: BookingProps = {}) => {
   const { toast } = useToast();
 
   const [step, setStep] = useState(1);
-  const [selectedService, setSelectedService] = useState(searchParams.get("service") || "");
-  const [selectedAddOns, setSelectedAddOns] = useState<string[]>([]);
+  const [selectedServices, setSelectedServices] = useState<string[]>(
+    searchParams.get("service") ? [searchParams.get("service") as string] : [],
+  );
   const [selectedDate, setSelectedDate] = useState<Date | undefined>();
   const [selectedTime, setSelectedTime] = useState("");
   const [selectedTherapist, setSelectedTherapist] = useState("any");
@@ -273,11 +274,10 @@ const Booking = ({ compact = false, onComplete }: BookingProps = {}) => {
     enabled: !!selectedDate,
   });
 
-  const currentService = services?.find((s) => s.id === selectedService);
-  const addOnServices = services?.filter((s) => selectedAddOns.includes(s.id)) || [];
-  const totalDuration =
-    (currentService?.duration_minutes || 0) + addOnServices.reduce((sum, s) => sum + s.duration_minutes, 0);
-  const totalPrice = (currentService?.price || 0) + addOnServices.reduce((sum, s) => sum + s.price, 0);
+  const currentServices = services?.filter((s) => selectedServices.includes(s.id)) || [];
+  const totalDuration = currentServices.reduce((sum, s) => sum + s.duration_minutes, 0);
+  const totalPrice = currentServices.reduce((sum, s) => sum + s.price, 0);
+  const combinedServiceName = currentServices.map((s) => s.name).join(" + ");
 
   const getAvailableTherapists = (timeStr: string, duration: number) => {
     if (!therapists || !selectedDate) return [];
@@ -316,7 +316,7 @@ const Booking = ({ compact = false, onComplete }: BookingProps = {}) => {
   };
 
   const availableSlots = useMemo(() => {
-    if (!currentService || !selectedDate || !therapists || isShopHoliday) return [];
+    if (currentServices.length === 0 || !selectedDate || !therapists || isShopHoliday) return [];
     const duration = totalDuration;
     const slots: { time: string; therapistCount: number }[] = [];
     const now = new Date();
@@ -356,7 +356,7 @@ const Booking = ({ compact = false, onComplete }: BookingProps = {}) => {
     return slots;
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
-    currentService,
+    currentServices,
     selectedDate,
     existingBookings,
     selectedTherapist,
@@ -368,7 +368,7 @@ const Booking = ({ compact = false, onComplete }: BookingProps = {}) => {
   ]);
 
   const handleSubmit = async () => {
-    if (!currentService || !selectedDate || !selectedTime) return;
+    if (currentServices.length === 0 || !selectedDate || !selectedTime) return;
     setIsSubmitting(true);
 
     const startTime = selectedTime + ":00";
@@ -377,7 +377,7 @@ const Booking = ({ compact = false, onComplete }: BookingProps = {}) => {
 
     let therapistId = selectedTherapist;
     if (selectedTherapist === "any") {
-      const available = getAvailableTherapists(selectedTime, currentService.duration_minutes);
+      const available = getAvailableTherapists(selectedTime, totalDuration);
       if (available.length === 0) {
         toast({
           title: "Error",
@@ -409,12 +409,9 @@ const Booking = ({ compact = false, onComplete }: BookingProps = {}) => {
     const bookingDateStr = format(selectedDate, "yyyy-MM-dd");
     const therapistName = therapists?.find((t) => t.id === therapistId)?.name || "";
 
-    const addOnNames = addOnServices.map((s) => s.name).join(", ");
-    const notesText = addOnNames ? `Add-ons: ${addOnNames}` : null;
-
     const { error } = await supabase.from("bookings").insert({
       id: bookingId,
-      service_id: selectedService,
+      service_id: currentServices[0].id,
       therapist_id: therapistId,
       customer_name: customerName.trim(),
       customer_phone: customerPhone.trim(),
@@ -423,9 +420,30 @@ const Booking = ({ compact = false, onComplete }: BookingProps = {}) => {
       start_time: startTime,
       end_time: endTime,
       status: "confirmed",
-      notes: notesText,
+      notes: null,
       ...(TENANT_ID ? { tenant_id: TENANT_ID } : {}),
     });
+
+    if (!error) {
+      await supabase.from("booking_services").insert(
+        currentServices.map((s, i) => ({
+          booking_id: bookingId,
+          service_id: s.id,
+          service_name: s.name,
+          duration_minutes: s.duration_minutes,
+          price: s.price,
+          is_primary: i === 0,
+          ...(TENANT_ID ? { tenant_id: TENANT_ID } : {}),
+        })),
+      );
+      await supabase.from("notifications").insert({
+        tenant_id: TENANT_ID || null,
+        type: "new_booking",
+        title: "New booking",
+        body: `${customerName.trim()} — ${combinedServiceName} — ${bookingDateStr} ${selectedTime}`,
+        booking_id: bookingId,
+      });
+    }
 
     setIsSubmitting(false);
     if (error) {
@@ -442,7 +460,7 @@ const Booking = ({ compact = false, onComplete }: BookingProps = {}) => {
           {
             body: {
               booking_id: bookingId,
-              service_name: currentService.name,
+              service_name: combinedServiceName,
               total_amount: totalPrice,
               customer_email: customerEmail.trim() || undefined,
               customer_name: customerName.trim(),
@@ -483,7 +501,7 @@ const Booking = ({ compact = false, onComplete }: BookingProps = {}) => {
           <h1 style="color: #1a1a1a; font-size: 24px; font-family: 'Noto Serif', serif; font-weight: 400;">Your booking is confirmed</h1>
           <p style="color: #555; font-size: 14px; line-height: 1.7;">Hi <strong>${esc(customerName.trim())}</strong>, thank you for booking with ESTIQUE.</p>
           <div style="background: #faf7f4; border: 1px solid #eadfd4; border-radius: 2px; padding: 20px; margin: 24px 0;">
-            <p style="margin: 6px 0;"><strong>Service:</strong> ${esc(currentService.name)}</p>
+            <p style="margin: 6px 0;"><strong>Service:</strong> ${esc(combinedServiceName)}</p>
             <p style="margin: 6px 0;"><strong>Date:</strong> ${format(selectedDate, "dd MMM yyyy")}</p>
             <p style="margin: 6px 0;"><strong>Time:</strong> ${selectedTime} – ${format(endDate, "HH:mm")}</p>
             <p style="margin: 6px 0;"><strong>Technician:</strong> ${esc(therapistName)}</p>
@@ -495,7 +513,7 @@ const Booking = ({ compact = false, onComplete }: BookingProps = {}) => {
         .invoke("send-email-resend", {
           body: {
             to: customerEmail.trim(),
-            subject: `Booking confirmed — ${currentService.name}`,
+            subject: `Booking confirmed — ${combinedServiceName}`,
             html: emailHtml,
           },
         })
@@ -548,7 +566,7 @@ const Booking = ({ compact = false, onComplete }: BookingProps = {}) => {
             <p className="text-muted-foreground text-sm">We'll be in touch shortly.</p>
           </div>
           <div className="text-left border border-border/60 p-5 space-y-3 text-sm">
-            <p className="flex justify-between"><span className="text-muted-foreground">Service</span><span className="font-medium">{currentService?.name}</span></p>
+            <p className="flex justify-between"><span className="text-muted-foreground">Service</span><span className="font-medium">{combinedServiceName}</span></p>
             <div className="h-px bg-border/40" />
             <p className="flex justify-between"><span className="text-muted-foreground">Date</span><span className="font-medium">{selectedDate && format(selectedDate, "dd MMM yyyy")}</span></p>
             <div className="h-px bg-border/40" />
@@ -646,76 +664,19 @@ const Booking = ({ compact = false, onComplete }: BookingProps = {}) => {
           <div className="space-y-6">
             <ServicePicker
               services={services}
-              selectedService={selectedService}
-              onSelect={(id) => {
-                setSelectedService(id);
-                setSelectedAddOns((prev) => prev.filter((x) => x !== id));
-              }}
+              selectedServices={selectedServices}
+              onToggle={(id) =>
+                setSelectedServices((prev) =>
+                  prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id],
+                )
+              }
               search={serviceSearch}
               setSearch={setServiceSearch}
               openCategories={openCategories}
               setOpenCategories={setOpenCategories}
             />
 
-            {selectedService && services && (() => {
-              const addOns = services.filter(
-                (s) => s.category === "Add-ons" && s.id !== selectedService,
-              );
-              if (addOns.length === 0) return null;
-              return (
-                <div>
-                  <p className="text-[10px] tracking-[0.25em] uppercase text-muted-foreground mb-4">
-                    Add-ons (optional)
-                  </p>
-                  <div className="space-y-2">
-                    {addOns.map((service) => {
-                      const isSelected = selectedAddOns.includes(service.id);
-                      return (
-                        <button
-                          key={service.id}
-                          onClick={() =>
-                            setSelectedAddOns((prev) =>
-                              isSelected
-                                ? prev.filter((id) => id !== service.id)
-                                : [...prev, service.id],
-                            )
-                          }
-                          className={cn(
-                            "w-full text-left p-3 sm:p-4 border transition-all duration-200 flex items-center gap-3",
-                            isSelected
-                              ? "border-primary bg-primary/[0.03]"
-                              : "border-border/60 hover:border-primary/40",
-                          )}
-                        >
-                          <div
-                            className={cn(
-                              "w-4 h-4 border flex items-center justify-center shrink-0",
-                              isSelected ? "border-primary bg-primary" : "border-muted-foreground/30",
-                            )}
-                          >
-                            {isSelected && <Check className="h-2.5 w-2.5 text-primary-foreground" />}
-                          </div>
-                          <div className="flex-1 flex justify-between items-center gap-2">
-                            <div>
-                              <div className="text-sm font-light">{service.name}</div>
-                              {service.description && (
-                                <div className="text-xs text-muted-foreground">{service.description}</div>
-                              )}
-                            </div>
-                            <div className="text-right shrink-0">
-                              <div className="text-xs font-light tabular-nums">{displayPrice(service)}</div>
-                              <div className="text-[10px] text-muted-foreground">{service.duration_minutes} min</div>
-                            </div>
-                          </div>
-                        </button>
-                      );
-                    })}
-                  </div>
-                </div>
-              );
-            })()}
-
-            {selectedService && (
+            {selectedServices.length > 0 && (
               <div className="flex items-center justify-between pt-4 border-t border-border/40">
                 <div className="text-sm text-muted-foreground">
                   {totalDuration} min · {formatPrice(totalPrice)}
@@ -969,13 +930,7 @@ const Booking = ({ compact = false, onComplete }: BookingProps = {}) => {
         {step === 4 && (
           <div className="space-y-6">
             <div className="border border-border/60 p-5 space-y-3 text-sm">
-              <p className="flex justify-between"><span className="text-muted-foreground">Service</span><span className="font-light">{currentService?.name}</span></p>
-              {addOnServices.length > 0 && (
-                <>
-                  <div className="h-px bg-border/40" />
-                  <p className="flex justify-between"><span className="text-muted-foreground">Add-ons</span><span className="font-light text-right">{addOnServices.map((s) => s.name).join(", ")}</span></p>
-                </>
-              )}
+              <p className="flex justify-between"><span className="text-muted-foreground">Service{currentServices.length > 1 ? "s" : ""}</span><span className="font-light text-right">{combinedServiceName}</span></p>
               <div className="h-px bg-border/40" />
               <p className="flex justify-between"><span className="text-muted-foreground">Date</span><span className="font-light">{selectedDate && format(selectedDate, "dd MMM yyyy")}</span></p>
               <div className="h-px bg-border/40" />
@@ -1022,8 +977,8 @@ const Booking = ({ compact = false, onComplete }: BookingProps = {}) => {
 
 type ServicePickerProps = {
   services: Service[] | undefined;
-  selectedService: string;
-  onSelect: (id: string) => void;
+  selectedServices: string[];
+  onToggle: (id: string) => void;
   search: string;
   setSearch: (v: string) => void;
   openCategories: string[] | null;
@@ -1032,8 +987,8 @@ type ServicePickerProps = {
 
 const ServicePicker = ({
   services,
-  selectedService,
-  onSelect,
+  selectedServices,
+  onToggle,
   search,
   setSearch,
   openCategories,
@@ -1057,12 +1012,12 @@ const ServicePicker = ({
   const expandedValue = useMemo(() => {
     if (isSearching) return filteredGroups.map((g) => g.category);
     if (openCategories !== null) return openCategories;
-    if (selectedService && services) {
-      const sel = services.find((s) => s.id === selectedService);
+    if (selectedServices.length > 0 && services) {
+      const sel = services.find((s) => selectedServices.includes(s.id));
       if (sel?.category) return [sel.category];
     }
     return filteredGroups[0] ? [filteredGroups[0].category] : [];
-  }, [isSearching, filteredGroups, openCategories, selectedService, services]);
+  }, [isSearching, filteredGroups, openCategories, selectedServices, services]);
 
   if (!services) {
     return (
@@ -1073,7 +1028,7 @@ const ServicePicker = ({
   return (
     <div>
       <p className="text-[10px] tracking-[0.25em] uppercase text-muted-foreground mb-3">
-        Primary service
+        Services — select one or more
       </p>
 
       <div className="relative mb-4">
@@ -1110,7 +1065,7 @@ const ServicePicker = ({
           className="space-y-2"
         >
           {filteredGroups.map((group) => {
-            const containsSelected = group.items.some((s) => s.id === selectedService);
+            const containsSelected = group.items.some((s) => selectedServices.includes(s.id));
             return (
               <AccordionItem
                 key={group.category}
@@ -1136,38 +1091,49 @@ const ServicePicker = ({
                 </AccordionTrigger>
                 <AccordionContent className="px-3 pb-3 pt-1">
                   <div className="space-y-1.5">
-                    {group.items.map((service) => (
-                      <button
-                        key={service.id}
-                        type="button"
-                        onClick={() => onSelect(service.id)}
-                        className={cn(
-                          "w-full text-left p-3 sm:p-4 border rounded-md transition-all duration-200",
-                          selectedService === service.id
-                            ? "border-primary bg-primary/[0.04]"
-                            : "border-border/60 hover:border-primary/40",
-                        )}
-                      >
-                        <div className="flex justify-between items-start gap-3">
-                          <div className="space-y-1 min-w-0">
-                            <div className="text-sm font-light leading-tight">{service.name}</div>
-                            {service.disclaimer && (
-                              <div className="text-[11px] text-muted-foreground italic leading-relaxed">
-                                {service.disclaimer}
-                              </div>
+                    {group.items.map((service) => {
+                      const isSelected = selectedServices.includes(service.id);
+                      return (
+                        <button
+                          key={service.id}
+                          type="button"
+                          onClick={() => onToggle(service.id)}
+                          className={cn(
+                            "w-full text-left p-3 sm:p-4 border rounded-md transition-all duration-200 flex items-center gap-3",
+                            isSelected
+                              ? "border-primary bg-primary/[0.04]"
+                              : "border-border/60 hover:border-primary/40",
+                          )}
+                        >
+                          <div
+                            className={cn(
+                              "w-4 h-4 border flex items-center justify-center shrink-0",
+                              isSelected ? "border-primary bg-primary" : "border-muted-foreground/30",
                             )}
+                          >
+                            {isSelected && <Check className="h-2.5 w-2.5 text-primary-foreground" />}
                           </div>
-                          <div className="text-right shrink-0">
-                            <div className="text-sm font-light tabular-nums">
-                              {displayPrice(service)}
+                          <div className="flex-1 flex justify-between items-start gap-3">
+                            <div className="space-y-1 min-w-0">
+                              <div className="text-sm font-light leading-tight">{service.name}</div>
+                              {service.disclaimer && (
+                                <div className="text-[11px] text-muted-foreground italic leading-relaxed">
+                                  {service.disclaimer}
+                                </div>
+                              )}
                             </div>
-                            <div className="text-[10px] text-muted-foreground">
-                              {service.duration_minutes} min
+                            <div className="text-right shrink-0">
+                              <div className="text-sm font-light tabular-nums">
+                                {displayPrice(service)}
+                              </div>
+                              <div className="text-[10px] text-muted-foreground">
+                                {service.duration_minutes} min
+                              </div>
                             </div>
                           </div>
-                        </div>
-                      </button>
-                    ))}
+                        </button>
+                      );
+                    })}
                   </div>
                 </AccordionContent>
               </AccordionItem>
