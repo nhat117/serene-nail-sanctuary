@@ -439,7 +439,11 @@ const Booking = ({ compact = false, onComplete }: BookingProps = {}) => {
       await supabase.from("notifications").insert({
         tenant_id: TENANT_ID || null,
         type: "new_booking",
-        title: "New booking",
+        // Stored as the same translation key the admin dashboard's realtime
+        // toast uses ('Lịch hẹn mới!'), rendered through t() on the admin
+        // side — never English/Vietnamese hardcoded, so it matches whatever
+        // language the admin has selected instead of always being English.
+        title: "Lịch hẹn mới!",
         body: `${customerName.trim()} — ${combinedServiceName} — ${bookingDateStr} ${selectedTime}`,
         booking_id: bookingId,
       });
