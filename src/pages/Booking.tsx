@@ -2,7 +2,7 @@ import { useCallback, useMemo, useState } from "react";
 import { Link, useSearchParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { addMinutes, format, isBefore, isToday, startOfDay } from "date-fns";
-import { ArrowLeft, ArrowRight, CalendarIcon, Check, Loader2, Search, X } from "lucide-react";
+import { ArrowLeft, ArrowRight, CalendarIcon, Check, Clock, Loader2, Search, X } from "lucide-react";
 
 import { supabase, TENANT_ID } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
@@ -91,6 +91,10 @@ type BookingProps = {
   /** Optional callback fired when the booking flow completes (so a parent dialog can react). */
   onComplete?: () => void;
 };
+
+// Edit this line to change the wait-time disclaimer shown during booking.
+const WAIT_TIME_DISCLAIMER =
+  "Your booking is confirmed, but during busy periods there may be a short wait — usually around 10 minutes. Thanks so much for your patience!";
 
 const Booking = ({ compact = false, onComplete }: BookingProps = {}) => {
   const [searchParams] = useSearchParams();
@@ -810,6 +814,13 @@ const Booking = ({ compact = false, onComplete }: BookingProps = {}) => {
               </div>
             )}
 
+            {selectedDate && selectedTime && (
+              <div className="flex items-start gap-2 text-sm text-amber-700 bg-amber-50 border border-amber-200/60 rounded-lg p-3">
+                <Clock className="h-4 w-4 mt-0.5 shrink-0" />
+                <span>{WAIT_TIME_DISCLAIMER}</span>
+              </div>
+            )}
+
             <div className="flex gap-3 pt-4 border-t border-border/40">
               <Button
                 variant="outline"
@@ -956,6 +967,12 @@ const Booking = ({ compact = false, onComplete }: BookingProps = {}) => {
               <div className="h-px bg-border/40" />
               <p className="flex justify-between"><span className="text-muted-foreground">Total</span><span className="font-medium">{formatPrice(totalPrice)}</span></p>
             </div>
+
+            <div className="flex items-start gap-2 text-sm text-amber-700 bg-amber-50 border border-amber-200/60 rounded-lg p-3">
+              <Clock className="h-4 w-4 mt-0.5 shrink-0" />
+              <span>{WAIT_TIME_DISCLAIMER}</span>
+            </div>
+
             <div className="flex gap-3">
               <Button
                 variant="outline"
