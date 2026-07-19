@@ -35,13 +35,13 @@ type Service = {
   sort_order?: number;
 };
 
-type WeeklyHour = {
+// A day can now have zero, one, or several independent shift blocks (a
+// split shift) instead of one row with its own break window — the break
+// is just the gap between two blocks, never stored.
+type WeeklyShiftBlock = {
   day_of_week: number;
-  is_working: boolean;
   start_minute: number;
   end_minute: number;
-  break_start_minute: number | null;
-  break_end_minute: number | null;
 };
 
 function formatMinutesHHMM(mins: number): string {
@@ -52,11 +52,15 @@ type Therapist = {
   id: string;
   name: string;
   is_active: boolean;
-  therapist_weekly_hours: WeeklyHour[];
+  therapist_weekly_hours: WeeklyShiftBlock[];
 };
 
-function getTherapistDayHours(therapist: Therapist, dayOfWeek: number): WeeklyHour | undefined {
-  return therapist.therapist_weekly_hours?.find((r) => r.day_of_week === dayOfWeek);
+function getTherapistDayBlocks(therapist: Therapist, dayOfWeek: number): WeeklyShiftBlock[] {
+  return therapist.therapist_weekly_hours?.filter((r) => r.day_of_week === dayOfWeek) ?? [];
+}
+
+function fitsInAnyBlock(startMins: number, endMins: number, blocks: WeeklyShiftBlock[]): boolean {
+  return blocks.some((b) => startMins >= b.start_minute && endMins <= b.end_minute);
 }
 
 const BUFFER_MINUTES = 15;
@@ -307,14 +311,11 @@ const Booking = ({ compact = false, onComplete }: BookingProps = {}) => {
 
     return therapists.filter((t) => {
       if (unavailability?.includes(t.id)) return false;
-      const dayHours = getTherapistDayHours(t, dayOfWeek);
-      if (!dayHours || !dayHours.is_working) return false;
+      const dayBlocks = getTherapistDayBlocks(t, dayOfWeek);
+      if (dayBlocks.length === 0) return false;
       const slotStartMin = parseInt(timeStr.split(":")[0]) * 60 + parseInt(timeStr.split(":")[1]);
       const slotEndMin = parseInt(endStr.split(":")[0]) * 60 + parseInt(endStr.split(":")[1]);
-      if (slotStartMin < dayHours.start_minute || slotEndMin > dayHours.end_minute) return false;
-      if (dayHours.break_start_minute != null && dayHours.break_end_minute != null) {
-        if (slotStartMin < dayHours.break_end_minute && slotEndMin > dayHours.break_start_minute) return false;
-      }
+      if (!fitsInAnyBlock(slotStartMin, slotEndMin, dayBlocks)) return false;
       const isBooked = existingBookings?.some((b: any) => {
         if (b.therapist_id !== t.id) return false;
         const [bsh, bsm] = b.start_time.split(":");
@@ -334,11 +335,12 @@ const Booking = ({ compact = false, onComplete }: BookingProps = {}) => {
     const now = new Date();
     const dayOfWeek = selectedDate.getDay() === 0 ? 7 : selectedDate.getDay();
 
-    const workingTherapists = therapists.filter((t) => getTherapistDayHours(t, dayOfWeek)?.is_working);
+    const workingTherapists = therapists.filter((t) => getTherapistDayBlocks(t, dayOfWeek).length > 0);
     if (workingTherapists.length === 0) return [];
 
-    const minStartMin = Math.min(...workingTherapists.map((t) => getTherapistDayHours(t, dayOfWeek)!.start_minute));
-    const maxEndMin = Math.max(...workingTherapists.map((t) => getTherapistDayHours(t, dayOfWeek)!.end_minute));
+    const allBlocks = workingTherapists.flatMap((t) => getTherapistDayBlocks(t, dayOfWeek));
+    const minStartMin = Math.min(...allBlocks.map((b) => b.start_minute));
+    const maxEndMin = Math.max(...allBlocks.map((b) => b.end_minute));
     const effectiveMaxEndMin = earlyCloseHour ? Math.min(maxEndMin, earlyCloseHour * 60) : maxEndMin;
 
     for (let mins = minStartMin; mins < maxEndMin; mins += 30) {
@@ -738,7 +740,7 @@ const Booking = ({ compact = false, onComplete }: BookingProps = {}) => {
                       const dayOfWeek = date.getDay() === 0 ? 7 : date.getDay();
                       if (!openDays.includes(dayOfWeek)) return true;
                       if (therapists) {
-                        const hasWorking = therapists.some((th) => getTherapistDayHours(th, dayOfWeek)?.is_working);
+                        const hasWorking = therapists.some((th) => getTherapistDayBlocks(th, dayOfWeek).length > 0);
                         if (!hasWorking) return true;
                       }
                       return false;
@@ -776,10 +778,13 @@ const Booking = ({ compact = false, onComplete }: BookingProps = {}) => {
                       ?.filter((t) => !unavailability?.includes(t.id))
                       .map((t) => {
                         const dow = selectedDate.getDay() === 0 ? 7 : selectedDate.getDay();
-                        const dayHours = getTherapistDayHours(t, dow);
+                        const dayBlocks = [...getTherapistDayBlocks(t, dow)].sort((a, b) => a.start_minute - b.start_minute);
+                        const blocksLabel = dayBlocks.length
+                          ? ` (${dayBlocks.map((b) => `${formatMinutesHHMM(b.start_minute)}–${formatMinutesHHMM(b.end_minute)}`).join(", ")})`
+                          : "";
                         return (
                           <SelectItem key={t.id} value={t.id}>
-                            {t.name}{dayHours?.is_working ? ` (${formatMinutesHHMM(dayHours.start_minute)}–${formatMinutesHHMM(dayHours.end_minute)})` : ""}
+                            {t.name}{blocksLabel}
                           </SelectItem>
                         );
                       })}
