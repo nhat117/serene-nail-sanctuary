@@ -246,7 +246,7 @@ const Booking = ({ compact = false, onComplete }: BookingProps = {}) => {
 
   const blockPublicHolidays = holidaySettings?.show_holiday_closed === "true";
   const shopState = holidaySettings?.shop_state || "VIC";
-  const openDays: number[] = holidaySettings?.open_days ? JSON.parse(holidaySettings.open_days) : [1, 2, 3, 4, 5, 6];
+  const openDays: number[] = holidaySettings?.open_days ? JSON.parse(holidaySettings.open_days) : [1, 2, 3, 4, 5, 6, 7];
 
   const { data: publicHolidays } = useQuery({
     queryKey: ["public-holidays-booking", shopState],
