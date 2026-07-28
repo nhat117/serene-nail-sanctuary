@@ -21,6 +21,7 @@ import { useToast } from "@/hooks/use-toast";
 import { bookingCustomerSchema, escapeHtml, validateField } from "@/lib/validation";
 import Navbar from "@/components/Navbar";
 import TopBar from "@/components/TopBar";
+import { TurnstileWidget } from "@/components/TurnstileWidget";
 
 type Service = {
   id: string;
@@ -137,6 +138,7 @@ const Booking = ({ compact = false, onComplete }: BookingProps = {}) => {
   const [redirectingToPayment, setRedirectingToPayment] = useState(false);
   const [fieldErrors, setFieldErrors] = useState<Record<string, string | null>>({});
   const [touched, setTouched] = useState<Record<string, boolean>>({});
+  const [turnstileToken, setTurnstileToken] = useState("");
   const [serviceSearch, setServiceSearch] = useState("");
   const [openCategories, setOpenCategories] = useState<string[] | null>(null);
 
@@ -377,6 +379,10 @@ const Booking = ({ compact = false, onComplete }: BookingProps = {}) => {
 
   const handleSubmit = async () => {
     if (currentServices.length === 0 || !selectedDate || !selectedTime) return;
+    if (!turnstileToken) {
+      toast({ title: "Error", description: "Please complete the verification before booking.", variant: "destructive" });
+      return;
+    }
     setIsSubmitting(true);
 
     const startTime = selectedTime + ":00";
@@ -413,52 +419,36 @@ const Booking = ({ compact = false, onComplete }: BookingProps = {}) => {
       setAssignedTherapistName(th?.name || "");
     }
 
-    const bookingId = crypto.randomUUID();
     const bookingDateStr = format(selectedDate, "yyyy-MM-dd");
     const therapistName = therapists?.find((t) => t.id === therapistId)?.name || "";
 
-    const { error } = await supabase.from("bookings").insert({
-      id: bookingId,
-      service_id: currentServices[0].id,
-      therapist_id: therapistId,
-      customer_name: customerName.trim(),
-      customer_phone: customerPhone.trim(),
-      customer_email: customerEmail.trim(),
-      booking_date: bookingDateStr,
-      start_time: startTime,
-      end_time: endTime,
-      status: "confirmed",
-      notes: null,
-      ...(TENANT_ID ? { tenant_id: TENANT_ID } : {}),
-    });
-
-    if (!error) {
-      await supabase.from("booking_services").insert(
-        currentServices.map((s, i) => ({
-          booking_id: bookingId,
-          service_id: s.id,
-          service_name: s.name,
+    const { data: createData, error } = await supabase.functions.invoke("create-booking", {
+      body: {
+        service_id: currentServices[0].id,
+        therapist_id: therapistId,
+        customer_name: customerName.trim(),
+        customer_phone: customerPhone.trim(),
+        customer_email: customerEmail.trim(),
+        booking_date: bookingDateStr,
+        start_time: startTime,
+        end_time: endTime,
+        notes: null,
+        turnstile_token: turnstileToken,
+        services: currentServices.map((s) => ({
+          id: s.id,
+          name: s.name,
           duration_minutes: s.duration_minutes,
           price: s.price,
-          is_primary: i === 0,
-          ...(TENANT_ID ? { tenant_id: TENANT_ID } : {}),
         })),
-      );
-      await supabase.from("notifications").insert({
-        tenant_id: TENANT_ID || null,
-        type: "new_booking",
-        // Stored as the same translation key the admin dashboard's realtime
-        // toast uses ('Lịch hẹn mới!'), rendered through t() on the admin
-        // side — never English/Vietnamese hardcoded, so it matches whatever
-        // language the admin has selected instead of always being English.
-        title: "Lịch hẹn mới!",
-        body: `${customerName.trim()} — ${combinedServiceName} — ${bookingDateStr} ${selectedTime}`,
-        booking_id: bookingId,
-      });
-    }
+        combined_service_name: combinedServiceName,
+        ...(TENANT_ID ? { tenant_id: TENANT_ID } : {}),
+      },
+    });
+
+    const bookingId = createData?.booking_id;
 
     setIsSubmitting(false);
-    if (error) {
+    if (error || !bookingId) {
       toast({ title: "Error", description: "Could not create booking. Please try again.", variant: "destructive" });
       return;
     }
@@ -985,6 +975,10 @@ const Booking = ({ compact = false, onComplete }: BookingProps = {}) => {
               <span>{WAIT_TIME_DISCLAIMER}</span>
             </div>
 
+            <div className="flex justify-center">
+              <TurnstileWidget onVerify={setTurnstileToken} onExpire={() => setTurnstileToken("")} />
+            </div>
+
             <div className="flex gap-3">
               <Button
                 variant="outline"
@@ -996,7 +990,7 @@ const Booking = ({ compact = false, onComplete }: BookingProps = {}) => {
               <Button
                 className="flex-1 rounded-lg text-xs tracking-[0.2em] uppercase h-10"
                 onClick={handleSubmit}
-                disabled={isSubmitting}
+                disabled={isSubmitting || !turnstileToken}
               >
                 {isSubmitting ? "Processing…" : "Confirm booking"}
               </Button>
