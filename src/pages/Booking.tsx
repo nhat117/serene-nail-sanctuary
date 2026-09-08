@@ -60,6 +60,17 @@ function getTherapistDayBlocks(therapist: Therapist, dayOfWeek: number): WeeklyS
   return therapist.therapist_weekly_hours?.filter((r) => r.day_of_week === dayOfWeek) ?? [];
 }
 
+/** 1=Mon..7=Sun for a date, matching therapist_weekly_hours.day_of_week. */
+function dayOfWeekFor(date: Date): number {
+  return date.getDay() === 0 ? 7 : date.getDay();
+}
+
+/** Does this technician work at all on `date` — rostered that weekday and not on a day off? */
+function worksOnDate(therapist: Therapist, date: Date, offToday: string[] = []): boolean {
+  if (offToday.includes(therapist.id)) return false;
+  return getTherapistDayBlocks(therapist, dayOfWeekFor(date)).length > 0;
+}
+
 function fitsInAnyBlock(startMins: number, endMins: number, blocks: WeeklyShiftBlock[]): boolean {
   return blocks.some((b) => startMins >= b.start_minute && endMins <= b.end_minute);
 }
@@ -720,6 +731,13 @@ const Booking = ({ compact = false, onComplete }: BookingProps = {}) => {
                     onSelect={(d) => {
                       setSelectedDate(d);
                       setSelectedTime("");
+                      // A technician picked for the previous date may be off on the
+                      // new one — drop the stale choice rather than leaving a name
+                      // selected that the list below no longer offers.
+                      if (d && selectedTherapist !== "any") {
+                        const picked = therapists?.find((th) => th.id === selectedTherapist);
+                        if (!picked || !worksOnDate(picked, d, unavailability || [])) setSelectedTherapist("any");
+                      }
                     }}
                     disabled={(date) => {
                       if (isBefore(startOfDay(date), startOfDay(new Date()))) return true;
@@ -764,14 +782,14 @@ const Booking = ({ compact = false, onComplete }: BookingProps = {}) => {
                   </SelectTrigger>
                   <SelectContent>
                     {randomEnabled !== false && <SelectItem value="any">Auto-assign (any available)</SelectItem>}
+                    {/* Only technicians who actually work the chosen date — someone
+                        rostered off that day has no bookable slot, so listing them
+                        here just leads to an empty time list. */}
                     {therapists
-                      ?.filter((t) => !unavailability?.includes(t.id))
+                      ?.filter((t) => worksOnDate(t, selectedDate, unavailability || []))
                       .map((t) => {
-                        const dow = selectedDate.getDay() === 0 ? 7 : selectedDate.getDay();
-                        const dayBlocks = [...getTherapistDayBlocks(t, dow)].sort((a, b) => a.start_minute - b.start_minute);
-                        const blocksLabel = dayBlocks.length
-                          ? ` (${dayBlocks.map((b) => `${formatMinutesHHMM(b.start_minute)}–${formatMinutesHHMM(b.end_minute)}`).join(", ")})`
-                          : "";
+                        const dayBlocks = [...getTherapistDayBlocks(t, dayOfWeekFor(selectedDate))].sort((a, b) => a.start_minute - b.start_minute);
+                        const blocksLabel = ` (${dayBlocks.map((b) => `${formatMinutesHHMM(b.start_minute)}–${formatMinutesHHMM(b.end_minute)}`).join(", ")})`;
                         return (
                           <SelectItem key={t.id} value={t.id}>
                             {t.name}{blocksLabel}
